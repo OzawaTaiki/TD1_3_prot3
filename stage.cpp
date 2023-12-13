@@ -6,16 +6,22 @@
 
 void Stage::collisionArrReset()
 {
+	int i, j;
+	fieldSize_ = { 0,0 };
 	// collisionのリセット
 	collision_.resize((*field_).size());
-	for (int i = 0; i < (*field_).size(); i++)
+	for (i = 0; i < (*field_).size(); i++)
 	{
 		collision_[i].resize((*field_)[i].size());
-		for (int j = 0; j < (*field_)[i].size(); j++)
+		for (j = 0; j < (*field_)[i].size(); j++)
 		{
 			collision_[i][j] = (*field_)[i][j];
 		}
+		if (j > fieldSize_.x)
+			fieldSize_.x = (float)j;
 	}
+	if (i > fieldSize_.y)
+		fieldSize_.y = (float)i;
 }
 
 void Stage::PieceMove()
@@ -29,16 +35,19 @@ void Stage::PieceMove()
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
 			if (piecePos_[i].x < mx_ &&
-				piecePos_[i].x + (*piece_)[i][0].size() * kMapchipSize_ > mx_ &&
+				piecePos_[i].x + (*piece_)[i][0].size() * kMapchipSize_ * scal_[i] > mx_ &&
 				piecePos_[i].y < my_ &&
-				piecePos_[i].y + (*piece_)[i].size() * kMapchipSize_ > my_ &&
+				piecePos_[i].y + (*piece_)[i].size() * kMapchipSize_ * scal_[i]> my_ &&
 				isHave_ == -1)
 			{
-				isHave_ = i;
-				scal_[i] = kKeyScal_[0];
 				sub_.x = piecePos_[i].x - mx_;
 				sub_.y = piecePos_[i].y - my_;
-				break;
+				if ((*piece_)[i][int(-sub_.y / (kMapchipSize_ * scal_[i]))][int(-sub_.x / (kMapchipSize_ * scal_[i]))] != 0)
+				{
+					scal_[i] = kKeyScal_[0];
+					isHave_ = i;
+					break;
+				}
 			}
 		}
 	}
@@ -66,24 +75,26 @@ void Stage::PieceMove()
 			isHave_ = -1;
 			piecePos_[i].y = float(int(piecePos_[i].y / kMapchipSize_ + (int(piecePos_[i].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 			piecePos_[i].x = float(int(piecePos_[i].x / kMapchipSize_ + (int(piecePos_[i].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
-			if (piecePos_[i].x >= (*field_)[0].size() * kMapchipSize_ || piecePos_[i].y >= (*field_).size() * kMapchipSize_)
-				scal_[i] = kKeyScal_[1];
-			else
-				scal_[i] = kKeyScal_[0];
+
+			scal_[i] = kKeyScal_[1];
 
 
-			if (piecePos_[i].x < (*field_)[0].size() * kMapchipSize_ && piecePos_[i].y < (*field_).size() * kMapchipSize_)
+			for (int y = 0; y < (*piece_)[i].size(); y++)
 			{
-				for (int y = 0; y < (*piece_)[i].size(); y++)
+				for (int x = 0; x < (*piece_)[i][y].size(); x++)
 				{
-					for (int x = 0; x < (*piece_)[i][y].size(); x++)
+					if (int(piecePos_[i].x / kMapchipSize_) + x < 0 ||
+						int(piecePos_[i].y / kMapchipSize_) + y < 0 ||
+						int(piecePos_[i].x / kMapchipSize_) + x >= fieldSize_.x ||
+						int(piecePos_[i].y / kMapchipSize_) + y >= fieldSize_.y)
+						continue;
+
+					if ((*piece_)[i][y][x] != 0 &&
+						int(piecePos_[i].x / kMapchipSize_) + x >= 0 && int(piecePos_[i].x / kMapchipSize_) + x < (*field_)[int(piecePos_[i].y / kMapchipSize_) + y].size() &&
+						int(piecePos_[i].y / kMapchipSize_) + y >= 0 && int(piecePos_[i].y / kMapchipSize_) + y < (*field_).size())
 					{
-						if ((*piece_)[i][y][x] != 0 &&
-							int(piecePos_[i].x / kMapchipSize_) + x >= 0 && int(piecePos_[i].x / kMapchipSize_) + x < (*field_)[0].size() &&
-							int(piecePos_[i].y / kMapchipSize_) + y >= 0 && int(piecePos_[i].y / kMapchipSize_) + y < (*field_).size())
-						{
-							collision_[int(piecePos_[i].y / kMapchipSize_) + y][int(piecePos_[i].x / kMapchipSize_) + x] = 1;
-						}
+						collision_[int(piecePos_[i].y / kMapchipSize_) + y][int(piecePos_[i].x / kMapchipSize_) + x] = 1;
+						scal_[i] = kKeyScal_[0];
 					}
 				}
 			}
@@ -118,8 +129,8 @@ void Stage::Init(int _stageNo)
 {
 	piecePos_.clear();
 	scal_.clear();
-	//field_->clear();
-	//piece_->clear();
+	if (field_ != nullptr)		field_->clear();
+	if (piece_ != nullptr)		piece_->clear();
 
 	CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
 
@@ -149,6 +160,7 @@ void Stage::Update(char* keys, char* preKeys)
 	{
 		selectStage_++;
 		Init(selectStage_);
+		collisionArrReset();
 		return;
 	}
 
@@ -163,11 +175,14 @@ void Stage::Draw(int windowWidth, int windowHeight)
 {
 	Novice::DrawBox(0, 0, windowWidth, windowHeight, 0, 0x00000080, kFillModeSolid);
 
+	Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
+
 	for (int y = 0; y < (*field_).size(); y++)
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
 			Novice::DrawBox(x * kMapchipSize_, y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
 
