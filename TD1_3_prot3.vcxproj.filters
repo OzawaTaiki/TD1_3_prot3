@@ -44,6 +44,9 @@
     <ClCompile Include="player.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="CSVLoader.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -119,5 +122,6 @@
     </ClInclude>
     <ClInclude Include="stage.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="CSVLoader.h" />
   </ItemGroup>
 </Project>
