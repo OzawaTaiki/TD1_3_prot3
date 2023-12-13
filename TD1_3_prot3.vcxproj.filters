@@ -14,6 +14,39 @@
     <Filter Include="KamataEngine\Adapter">
       <UniqueIdentifier>{c6468eb4-788b-4a83-b207-a5f4804e56c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="クラス">
+      <UniqueIdentifier>{aaace4cb-78a0-41ce-a103-4c9e70f9bc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\オブジェクト">
+      <UniqueIdentifier>{0150a17c-a856-4239-9342-ac43ccb9ed30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\シーン">
+      <UniqueIdentifier>{aea2a558-4efa-4824-9f59-1b38316d363f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\ステージ">
+      <UniqueIdentifier>{eaf0e600-6462-441a-b67a-137faeda6872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\オブジェクト\プレイヤー">
+      <UniqueIdentifier>{b3ea5c9e-9255-4394-bc3f-ef240f9e0a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\システム">
+      <UniqueIdentifier>{53642770-0927-41e0-8c94-b5068ce2d2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\システム\カーソル">
+      <UniqueIdentifier>{5a546529-e077-4790-92a3-3a14641e58b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースコード">
+      <UniqueIdentifier>{b26ca075-9a75-493e-bc50-215eb4ef1a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\UserInterface">
+      <UniqueIdentifier>{f2cb3957-a1f0-4d07-bf0d-6b006158444f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\PhilliaFunction">
+      <UniqueIdentifier>{92a3d3a5-7bc1-4d4a-b52c-86b0909713b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="クラス\UserInterface\UI_Manager">
+      <UniqueIdentifier>{a3116e8a-ab85-4855-967f-2f3d7f59577b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -28,7 +61,6 @@
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\WinApp.cpp">
       <Filter>KamataEngine\Source</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp">
       <Filter>KamataEngine\Adapter</Filter>
     </ClCompile>
@@ -39,10 +71,31 @@
       <Filter>KamataEngine\Source</Filter>
     </ClCompile>
     <ClCompile Include="stage.cpp">
-      <Filter>KamataEngine</Filter>
+      <Filter>クラス\ステージ</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
-      <Filter>KamataEngine</Filter>
+      <Filter>クラス\オブジェクト\プレイヤー</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager\CursorManager.cpp">
+      <Filter>クラス\システム\カーソル</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソースコード</Filter>
+    </ClCompile>
+    <ClCompile Include="Scroll.cpp">
+      <Filter>クラス\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\Phill.cpp">
+      <Filter>クラス\PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\PhillEasing.cpp">
+      <Filter>クラス\PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\TCPIP.cpp">
+      <Filter>クラス\PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>クラス\UserInterface\UI_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +170,26 @@
     <ClInclude Include="C:\KamataEngine\DirectXGame\base\StringUtility.h">
       <Filter>KamataEngine\Include</Filter>
     </ClInclude>
-    <ClInclude Include="stage.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="stage.h">
+      <Filter>クラス\ステージ</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>クラス\オブジェクト\プレイヤー</Filter>
+    </ClInclude>
+    <ClInclude Include="CursorManager\CursorManager.h">
+      <Filter>クラス\システム\カーソル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scroll.h">
+      <Filter>クラス\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="PhilliaFunction\Phill.h">
+      <Filter>クラス\PhilliaFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>クラス\UserInterface\UI_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_defines.h">
+      <Filter>クラス\UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

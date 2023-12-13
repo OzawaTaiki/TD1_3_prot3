@@ -115,9 +115,15 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\TextureManager.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
+    <ClCompile Include="CursorManager\CursorManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhilliaFunction\Phill.cpp" />
+    <ClCompile Include="PhilliaFunction\PhillEasing.cpp" />
+    <ClCompile Include="PhilliaFunction\TCPIP.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="stage.cpp" />
+    <ClCompile Include="Scroll.cpp" />
+    <ClCompile Include="UI_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\base\StringUtility.h" />
@@ -147,8 +153,13 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="C:\KamataEngine\DirectXGame\input\Input.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
+    <ClInclude Include="CursorManager\CursorManager.h" />
+    <ClInclude Include="PhilliaFunction\Phill.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="stage.h" />
+    <ClInclude Include="UI_defines.h" />
+    <ClInclude Include="Scroll.h" />
+    <ClInclude Include="UI_Manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
