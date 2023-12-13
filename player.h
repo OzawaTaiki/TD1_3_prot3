@@ -18,6 +18,8 @@ public:
 
 	void SetPos(int x, int y) { posX = x; posY = y; };
 
+	void Init();
+
 	void Update(char* keys, char* preKeys);
 
 	void Draw(int mapchipSize);

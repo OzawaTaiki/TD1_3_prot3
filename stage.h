@@ -6,7 +6,8 @@ class Player;
 //class CSV_Loader;
 
 const int kMaxFieldSize_ = 18;
-const int kMaxPieceNum = 10;
+const int kMaxPieceNum_ = 10;
+const int kMaxTileNum_ = 3;
 
 class Stage
 {
@@ -22,8 +23,14 @@ class Stage
 		1.0f,0.75f
 	};
 
+	const unsigned int kTileColor_[kMaxTileNum_] = {
+		0xffffffff,
+		0x000000ff,
+		0xff0000ff
+	};
+
 	//pieceの色(ChatGPT君セレクト)
-	const unsigned int color_[kMaxPieceNum] = {
+	const unsigned int color_[kMaxPieceNum_] = {
 		0xFF5733a0,
 		0xA8B820a0,
 		0x3D9140a0,
@@ -39,10 +46,13 @@ class Stage
 	Vector2 sub_ = { 0,0 };
 	int isHave_ = -1;
 	int mx_, my_;
+	int selectStage_ = 0;
+	bool isNext_;
 
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
-		"./data/mapchip.csv"
+		"./data/mapchip.csv",
+		"./data/mapchip1.csv",
 	};
 
 	Player* player_;
@@ -52,6 +62,7 @@ class Stage
 	void PieceMove();
 
 	void playerCollision();
+
 public:
 	Stage();
 
@@ -59,6 +70,6 @@ public:
 
 	void Update(char* keys, char* preKeys);
 
-	void Draw();
+	void Draw(int windowWidth, int windowHeight);
 
 };
