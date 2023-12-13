@@ -16,6 +16,11 @@ class Stage
 	std::vector<std::vector<int>> collision_;
 	std::vector<std::vector<std::vector<int>>>* piece_;
 	std::vector<Vector2> piecePos_;
+	std::vector<float> scal_;
+
+	const float kKeyScal_[2] = {
+		1.0f,0.75f
+	};
 
 	//pieceの色(ChatGPT君セレクト)
 	const unsigned int color_[kMaxPieceNum] = {

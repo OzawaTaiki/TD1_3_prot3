@@ -35,6 +35,7 @@ void Stage::PieceMove()
 				isHave_ == -1)
 			{
 				isHave_ = i;
+				scal_[i] = kKeyScal_[0];
 				sub_.x = piecePos_[i].x - mx_;
 				sub_.y = piecePos_[i].y - my_;
 				break;
@@ -56,11 +57,22 @@ void Stage::PieceMove()
 	{
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
+			if (isHave_ != -1)
+			{
+				int a = 0;
+				a++;
+			}
+
 			isHave_ = -1;
 			piecePos_[i].y = float(int(piecePos_[i].y / kMapchipSize_ + (int(piecePos_[i].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 			piecePos_[i].x = float(int(piecePos_[i].x / kMapchipSize_ + (int(piecePos_[i].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
+			if (piecePos_[i].x >= (*field_)[0].size() * kMapchipSize_)
+				scal_[i] = kKeyScal_[1];
+			else
+				scal_[i] = kKeyScal_[0];
 
-			if (int(piecePos_[i].x / kMapchipSize_) < (*field_)[int(piecePos_[i].y / kMapchipSize_)].size() && int(piecePos_[i].y / kMapchipSize_) < (*field_).size())
+
+			if (piecePos_[i].x < (*field_)[0].size() * kMapchipSize_ && piecePos_[i].y < (*field_).size() * kMapchipSize_)
 			{
 				for (int y = 0; y < (*piece_)[i].size(); y++)
 				{
@@ -106,6 +118,7 @@ void Stage::Init(int _stageNo)
 	piece_ = CSV_Loader::GetPointerPiece();
 
 	piecePos_.resize(piece_->size());
+	scal_.resize(piece_->size());
 }
 
 void Stage::Update(char* keys, char* preKeys)
@@ -135,7 +148,7 @@ void Stage::Draw()
 		{
 			for (int x = 0; x < (*piece_)[i][y].size(); x++)
 			{
-				Novice::DrawBox(int(piecePos_[i].x) + x * kMapchipSize_, int(piecePos_[i].y) + y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
+				Novice::DrawBox(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
 			}
 		}
 	}
