@@ -54,7 +54,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		stage->Draw();
+		stage->Draw(kWindowWidth,kWindowHeight);
 
 		///
 		/// ↑描画処理ここまで

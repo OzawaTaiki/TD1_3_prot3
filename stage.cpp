@@ -66,7 +66,7 @@ void Stage::PieceMove()
 			isHave_ = -1;
 			piecePos_[i].y = float(int(piecePos_[i].y / kMapchipSize_ + (int(piecePos_[i].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 			piecePos_[i].x = float(int(piecePos_[i].x / kMapchipSize_ + (int(piecePos_[i].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
-			if (piecePos_[i].x >= (*field_)[0].size() * kMapchipSize_)
+			if (piecePos_[i].x >= (*field_)[0].size() * kMapchipSize_ || piecePos_[i].y >= (*field_).size() * kMapchipSize_)
 				scal_[i] = kKeyScal_[1];
 			else
 				scal_[i] = kKeyScal_[0];
@@ -79,7 +79,7 @@ void Stage::PieceMove()
 					for (int x = 0; x < (*piece_)[i][y].size(); x++)
 					{
 						if ((*piece_)[i][y][x] != 0 &&
-							int(piecePos_[i].x / kMapchipSize_) + x >= 0 && int(piecePos_[i].x / kMapchipSize_) + x < (*field_)[int(piecePos_[i].y / kMapchipSize_)].size() &&
+							int(piecePos_[i].x / kMapchipSize_) + x >= 0 && int(piecePos_[i].x / kMapchipSize_) + x < (*field_)[0].size() &&
 							int(piecePos_[i].y / kMapchipSize_) + y >= 0 && int(piecePos_[i].y / kMapchipSize_) + y < (*field_).size())
 						{
 							collision_[int(piecePos_[i].y / kMapchipSize_) + y][int(piecePos_[i].x / kMapchipSize_) + x] = 1;
@@ -96,14 +96,18 @@ void Stage::playerCollision()
 	if (player_->GetMoveDir().x != 0 || player_->GetMoveDir().y != 0)
 	{
 		int k = 0;
-		while (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] == 0)
+		while (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] != 1)
 		{
 			k++;
 		}
 		k--;
 		player_->SetPos(int(player_->GetPosX() + player_->GetMoveDir().x * k), int(player_->GetPosY() + player_->GetMoveDir().y * k));
 	}
+
+	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
+		isNext_ = true;
 }
+
 
 Stage::Stage()
 {
@@ -112,6 +116,9 @@ Stage::Stage()
 
 void Stage::Init(int _stageNo)
 {
+	piecePos_.clear();
+	scal_.clear();
+
 	CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
 
 	field_ = CSV_Loader::GetPointerMapchip();
@@ -119,10 +126,26 @@ void Stage::Init(int _stageNo)
 
 	piecePos_.resize(piece_->size());
 	scal_.resize(piece_->size());
+
+	for (int i = 0; i < piecePos_.size(); i++)
+	{
+		piecePos_[i].x = 1000.0f;
+		piecePos_[i].y = 30.0f + i * 200.0f;
+	}
+
+	isNext_ = false;
+
+	player_->Init();
 }
 
 void Stage::Update(char* keys, char* preKeys)
 {
+	if (isNext_)
+	{
+		selectStage_++;
+		Init(selectStage_);
+	}
+
 	collisionArrReset();
 	PieceMove();
 
@@ -130,15 +153,15 @@ void Stage::Update(char* keys, char* preKeys)
 	playerCollision();
 }
 
-void Stage::Draw()
+void Stage::Draw(int windowWidth, int windowHeight)
 {
-	Novice::DrawBox(0, 0, 1280, 720, 0, 0x00000080, kFillModeSolid);
+	Novice::DrawBox(0, 0, windowWidth, windowHeight, 0, 0x00000080, kFillModeSolid);
 
 	for (int y = 0; y < (*field_).size(); y++)
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-			Novice::DrawBox(x * kMapchipSize_, y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, (*field_)[y][x] == 0 ? 0xffffffa0 : BLACK, kFillModeSolid);
+			Novice::DrawBox(x * kMapchipSize_, y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
 		}
 	}
 
