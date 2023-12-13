@@ -49,9 +49,11 @@ class Stage
 	int selectStage_ = 0;
 	bool isNext_;
 
-	//ファイル名一括管理 すべてここに入力
+	//ファイル名一括管理 すべてここに入力w
 	const char* stageFilePath_[64] = {
-		"./data/mapchip.csv",
+		"./data/-_testStage2.csv",
+		"./data/-_testStage3.csv",
+		"./data/-_testStage4.csv",
 		"./data/mapchip1.csv",
 	};
 

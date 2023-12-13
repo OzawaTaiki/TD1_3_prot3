@@ -3,17 +3,17 @@
 
 Player::Player()
 {
-	posX = 1;
-	posY = 1;
+	posX = (int)startPos[0].x;
+	posY = (int)startPos[0].y;
 	size = { 32,32 };
 	moveDir = { 0,0 };
 	color = 0x0000ffff;
 }
 
-void Player::Init()
+void Player::Init(int stageNo)
 {
-	posX = 1;
-	posY = 1;
+	posX = (int)startPos[stageNo].x;
+	posY = (int)startPos[stageNo].y;
 	moveDir = { 0,0 };
 }
 

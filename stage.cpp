@@ -135,15 +135,19 @@ void Stage::Init(int _stageNo)
 
 	isNext_ = false;
 
-	player_->Init();
+	player_->Init(_stageNo);
 }
 
 void Stage::Update(char* keys, char* preKeys)
 {
+	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
+		isNext_ = true;
+
 	if (isNext_)
 	{
 		selectStage_++;
 		Init(selectStage_);
+		return;
 	}
 
 	collisionArrReset();
