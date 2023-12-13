@@ -118,6 +118,8 @@ void Stage::Init(int _stageNo)
 {
 	piecePos_.clear();
 	scal_.clear();
+	//field_->clear();
+	//piece_->clear();
 
 	CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
 
