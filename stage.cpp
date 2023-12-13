@@ -106,7 +106,6 @@ void Stage::Init(int _stageNo)
 	piece_ = CSV_Loader::GetPointerPiece();
 
 	piecePos_.resize(piece_->size());
-
 }
 
 void Stage::Update(char* keys, char* preKeys)
@@ -136,7 +135,7 @@ void Stage::Draw()
 		{
 			for (int x = 0; x < (*piece_)[i][y].size(); x++)
 			{
-				Novice::DrawBox(int(piecePos_[i].x) + x * kMapchipSize_, int(piecePos_[i].y) + y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color[i], kFillModeSolid);
+				Novice::DrawBox(int(piecePos_[i].x) + x * kMapchipSize_, int(piecePos_[i].y) + y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
 			}
 		}
 	}
