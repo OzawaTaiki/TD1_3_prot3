@@ -43,13 +43,14 @@ class Stage
 		0x2B50E7a0
 	};
 
+	Vector2 fieldSize_ = { 0,0 };
 	Vector2 sub_ = { 0,0 };
 	int isHave_ = -1;
 	int mx_, my_;
 	int selectStage_ = 0;
 	bool isNext_;
 
-	//ファイル名一括管理 すべてここに入力w
+	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
 		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
