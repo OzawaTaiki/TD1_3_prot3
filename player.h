@@ -35,6 +35,6 @@ public:
 
 	void Update(char* keys, char* preKeys);
 
-	void Draw(int mapchipSize);
+	void Draw(int mapchipSize, Vector2 keyPos);
 
 };
