@@ -3,7 +3,9 @@
 #include <vector>
 
 class Player;
-//class CSV_Loader;
+
+static const int kWindowWidth = 1920;
+static const int kWindowHeight = 1080;
 
 const int kMaxFieldSize_ = 18;
 const int kMaxPieceNum_ = 10;
@@ -44,6 +46,7 @@ class Stage
 	};
 
 	Vector2 fieldSize_ = { 0,0 };
+	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
 	Vector2 sub_ = { 0,0 };
 	int isHave_ = -1;
 	int mx_, my_;
@@ -73,6 +76,6 @@ public:
 
 	void Update(char* keys, char* preKeys);
 
-	void Draw(int windowWidth, int windowHeight);
+	void Draw();
 
 };

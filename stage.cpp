@@ -8,7 +8,9 @@ void Stage::collisionArrReset()
 {
 	int i, j;
 	fieldSize_ = { 0,0 };
+
 	// collisionのリセット
+	//fieldのサイズを保存(正方形
 	collision_.resize((*field_).size());
 	for (i = 0; i < (*field_).size(); i++)
 	{
@@ -78,22 +80,23 @@ void Stage::PieceMove()
 
 			scal_[i] = kKeyScal_[1];
 
-
 			for (int y = 0; y < (*piece_)[i].size(); y++)
 			{
 				for (int x = 0; x < (*piece_)[i][y].size(); x++)
 				{
-					if (int(piecePos_[i].x / kMapchipSize_) + x < 0 ||
-						int(piecePos_[i].y / kMapchipSize_) + y < 0 ||
-						int(piecePos_[i].x / kMapchipSize_) + x >= fieldSize_.x ||
-						int(piecePos_[i].y / kMapchipSize_) + y >= fieldSize_.y)
+					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x < 0 ||
+						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y < 0 ||
+						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x >= fieldSize_.x ||
+						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y >= fieldSize_.y)
 						continue;
 
 					if ((*piece_)[i][y][x] != 0 &&
-						int(piecePos_[i].x / kMapchipSize_) + x >= 0 && int(piecePos_[i].x / kMapchipSize_) + x < (*field_)[int(piecePos_[i].y / kMapchipSize_) + y].size() &&
-						int(piecePos_[i].y / kMapchipSize_) + y >= 0 && int(piecePos_[i].y / kMapchipSize_) + y < (*field_).size())
+						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x >= 0 &&
+						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x < (*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y].size() &&
+						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y >= 0 &&
+						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y < (*field_).size())
 					{
-						collision_[int(piecePos_[i].y / kMapchipSize_) + y][int(piecePos_[i].x / kMapchipSize_) + x] = 1;
+						collision_[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] = 1;
 						scal_[i] = kKeyScal_[0];
 					}
 				}
@@ -119,7 +122,6 @@ void Stage::playerCollision()
 		isNext_ = true;
 }
 
-
 Stage::Stage()
 {
 	player_ = new Player;
@@ -127,6 +129,8 @@ Stage::Stage()
 
 void Stage::Init(int _stageNo)
 {
+	fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
+
 	piecePos_.clear();
 	scal_.clear();
 	if (field_ != nullptr)		field_->clear();
@@ -145,6 +149,12 @@ void Stage::Init(int _stageNo)
 		piecePos_[i].x = 1000.0f;
 		piecePos_[i].y = 30.0f + i * 200.0f;
 	}
+	collisionArrReset();
+
+	fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
+	fieldKeyPos_.x = float((int)fieldKeyPos_.x / kMapchipSize_ * kMapchipSize_);
+	fieldKeyPos_.y -= fieldSize_.y / 2 * kMapchipSize_;
+	fieldKeyPos_.y = float((int)fieldKeyPos_.y/ kMapchipSize_ * kMapchipSize_);
 
 	isNext_ = false;
 
@@ -160,7 +170,6 @@ void Stage::Update(char* keys, char* preKeys)
 	{
 		selectStage_++;
 		Init(selectStage_);
-		collisionArrReset();
 		return;
 	}
 
@@ -171,25 +180,18 @@ void Stage::Update(char* keys, char* preKeys)
 	playerCollision();
 }
 
-void Stage::Draw(int windowWidth, int windowHeight)
+void Stage::Draw()
 {
-	Novice::DrawBox(0, 0, windowWidth, windowHeight, 0, 0x00000080, kFillModeSolid);
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0, 0x00000080, kFillModeSolid);
 
-	for (int y = 0; y < 18; y++)
-	{
-		for (int x = 0; x < 18; x++)
-		{
-			Novice::DrawBox(x * 40, y * 40, 39, 39, 0, field[y][x] == 0 ? 0xffffffa0 : BLACK, kFillModeSolid);
-      Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
-		}
-	}
+	Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
 
 	for (int y = 0; y < (*field_).size(); y++)
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-			Novice::DrawBox(x * kMapchipSize_, y * kMapchipSize_, kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+			Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
 
@@ -204,5 +206,5 @@ void Stage::Draw(int windowWidth, int windowHeight)
 		}
 	}
 
-	player_->Draw(kMapchipSize_);
+	player_->Draw(kMapchipSize_, fieldKeyPos_);
 }
