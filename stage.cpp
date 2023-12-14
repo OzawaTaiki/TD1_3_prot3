@@ -140,7 +140,7 @@ void Stage::Draw()
 		for (int x = 0; x < 18; x++)
 		{
 			Novice::DrawBox(x * 40, y * 40, 39, 39, 0, field[y][x] == 0 ? 0xffffffa0 : BLACK, kFillModeSolid);
-			Novice::ScreenPrintf(900 + x * 20, y * 20, "%d", collision[y][x]);
+			//Novice::ScreenPrintf(900 + x * 20, y * 20, "%d", collision[y][x]);
 		}
 	}
 
