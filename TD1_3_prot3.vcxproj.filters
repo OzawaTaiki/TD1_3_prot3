@@ -97,6 +97,9 @@
     <ClCompile Include="UI_Manager.cpp">
       <Filter>クラス\UserInterface\UI_Manager</Filter>
     </ClCompile>
+    <ClCompile Include="CSVLoader.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">

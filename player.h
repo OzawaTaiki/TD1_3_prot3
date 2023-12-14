@@ -8,6 +8,19 @@ class Player
 	Vector2 moveDir;
 	unsigned int color;
 
+	const Vector2 startPos[10] = {
+		{1,10},
+		{8,12},
+		{1,11},
+		{1,16},
+		{1,16},
+		{1,16},
+		{1,16},
+		{1,16},
+		{1,16},
+		{1,16}
+	};
+
 public:
 	Vector2 GetMoveDir() { return moveDir; };
 
@@ -17,6 +30,8 @@ public:
 	Player();
 
 	void SetPos(int x, int y) { posX = x; posY = y; };
+
+	void Init(int stageNo);
 
 	void Update(char* keys, char* preKeys);
 
