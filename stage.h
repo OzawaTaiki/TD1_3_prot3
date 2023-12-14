@@ -19,6 +19,7 @@ class Stage
 	std::vector<std::vector<int>> collision_;
 	std::vector<std::vector<std::vector<int>>>* piece_;
 	std::vector<Vector2> piecePos_;
+	std::vector<Vector2> pieceSize_;
 	std::vector<float> scal_;
 
 	const float kKeyScal_[2] = {
@@ -48,6 +49,7 @@ class Stage
 	Vector2 fieldSize_ = { 0,0 };
 	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
 	Vector2 sub_ = { 0,0 };
+	Vector2 piecePrePos_;
 	int isHave_ = -1;
 	int mx_, my_;
 	int selectStage_ = 0;
