@@ -18,12 +18,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	UI_Manager::Init();
+	
 	
 
 	Stage* stage = new Stage;
 	stage->Init(0);
 	bool isFullSize = false;
+
+	// クラスの初期化
+	UI_Manager::Init(stage);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -46,8 +49,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		stage->Update(keys, preKeys);
 		UI_Manager::Update();
+		stage->Update(keys, preKeys);
 
 		///
 		/// ↑更新処理ここまで

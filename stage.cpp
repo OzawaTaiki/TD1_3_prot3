@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include "CSVLoader.h"
+#include "UI_Manager.h"
 
 void Stage::collisionArrReset()
 {
@@ -127,6 +128,12 @@ Stage::Stage()
 	player_ = new Player;
 }
 
+void Stage::MoveScrollWindow(int _posX, int _posY, int _num)
+{
+	piecePos_[_num].x = float(_posX);
+	piecePos_[_num].y = float(_posY);
+}
+
 void Stage::Init(int _stageNo)
 {
 	fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
@@ -207,4 +214,20 @@ void Stage::Draw()
 	}
 
 	player_->Draw(kMapchipSize_, fieldKeyPos_);
+}
+
+bool Stage::IsPieceOnRect(Vector2 _pos, float _width, float _height, int* _isHave)
+{
+	if (isHave_ != -1)
+	{
+		*_isHave = isHave_;
+		if (_pos.x				< float(mx_) &&
+			_pos.x + _width		> float(mx_) &&
+			_pos.y				< float(my_) &&
+			_pos.y + _height	> float(my_))
+		{
+			return true;
+		}
+	}
+	return false;
 }

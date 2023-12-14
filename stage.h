@@ -69,7 +69,11 @@ class Stage
 
 	void playerCollision();
 
+	
+
+
 public:
+	
 	Stage();
 
 	void Init(int stageNo);
@@ -77,5 +81,9 @@ public:
 	void Update(char* keys, char* preKeys);
 
 	void Draw();
+
+	bool IsPieceOnRect(Vector2 _pos, float _width, float _height, int* _isHave);
+
+	void MoveScrollWindow(int _posX, int _posY, int _num);
 
 };
