@@ -9,7 +9,7 @@ static const int kWindowHeight = 1080;
 
 const int kMaxFieldSize_ = 18;
 const int kMaxPieceNum_ = 10;
-const int kMaxTileNum_ = 3;
+const int kMaxTileNum_ = 3;//NONE,WALL,GOAL
 
 class Stage
 {
@@ -46,21 +46,20 @@ class Stage
 		0x2B50E7a0
 	};
 
-	Vector2 fieldSize_ = { 0,0 };
-	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
-	Vector2 sub_ = { 0,0 };
-	Vector2 piecePrePos_;
-	int isHave_ = -1;
-	int mx_, my_;
-	int selectStage_ = 0;
-	bool isNext_;
+	Vector2 fieldSize_ = { 0,0 };										//fieldの最大のサイズ
+	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };	//field の基準座標
+	Vector2 sub_ = { 0,0 };												//マウスとpieceの差
+	Vector2 piecePrePos_;												//pieceの前の座標
+	int isHave_ = -1;													//piece所持フラグ -1:もってない 0~:番号のピース所持
+	int mx_, my_;														//マウスカーソルの座標
+	int selectStage_ = 0;												//ステージナンバー
+	bool isNext_;														//クリアフラグ
 
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
 		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
-		"./data/-_testStage4.csv",
-		"./data/mapchip1.csv",
+		"./data/-_testStage4.csv"
 	};
 
 	Player* player_;
