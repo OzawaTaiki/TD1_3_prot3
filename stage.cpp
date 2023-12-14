@@ -37,9 +37,9 @@ void Stage::PieceMove()
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
 			if (piecePos_[i].x < mx_ &&
-				piecePos_[i].x + (*piece_)[i][0].size() * kMapchipSize_ * scal_[i] > mx_ &&
+				piecePos_[i].x + pieceSize_[i].x * kMapchipSize_ * scal_[i] > mx_ &&
 				piecePos_[i].y < my_ &&
-				piecePos_[i].y + (*piece_)[i].size() * kMapchipSize_ * scal_[i]> my_ &&
+				piecePos_[i].y + pieceSize_[i].y * kMapchipSize_ * scal_[i] > my_ &&
 				isHave_ == -1)
 			{
 				sub_.x = piecePos_[i].x - mx_;
@@ -48,11 +48,13 @@ void Stage::PieceMove()
 				{
 					scal_[i] = kKeyScal_[0];
 					isHave_ = i;
+					piecePrePos_ = piecePos_[i];
 					break;
 				}
 			}
 		}
 	}
+
 	//押してるとき
 	//pieceをマウスと同じように移動
 	else if (Novice::IsPressMouse(0) && !Novice::IsTriggerMouse(0) && isHave_ != -1)
@@ -68,6 +70,7 @@ void Stage::PieceMove()
 	{
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
+			bool isInFrame[4] = { false,0,0,0 };
 			if (isHave_ != -1)
 			{
 				int a = 0;
@@ -90,6 +93,79 @@ void Stage::PieceMove()
 						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y >= fieldSize_.y)
 						continue;
 
+					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x == player_->GetPosX() &&
+						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y == player_->GetPosY())
+					{
+						if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_))][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_))] == 1)
+						{
+							isInFrame[0] = true;
+							break;
+						}
+
+							for (int dir = 0; dir < 4; dir++)
+							{
+								int move = 0;
+									bool isExit = false;
+									while (!isInFrame[dir])
+									{
+										switch (dir)
+										{
+										case 0://上
+											if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move) < 0)
+											{
+												isExit = true;
+												break;
+											}
+											if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
+											{
+												isInFrame[0] = true;
+											}
+											
+											break;
+										case 1://左
+											if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move) < 0)
+											{
+												isExit = true;
+												break;
+											}
+											if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
+											{
+												isInFrame[1] = true;
+											}
+											break;
+										case 2://下
+											if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move) > (*piece_)[i].size())
+											{
+												isExit = true;
+												break;
+											}
+											if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
+											{
+												isInFrame[2] = true;
+											}
+											break;
+										case 3://右
+											if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move) > (*piece_)[i][y].size())
+											{
+												isExit = true;
+												break;
+											}
+											if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
+											{
+												isInFrame[3] = true;
+											}
+											break;
+										default:
+											break;
+										}
+										move++;
+										if (isExit)
+											break;
+									}
+							}
+					}
+
+					//枠内にあるかどうか
 					if ((*piece_)[i][y][x] != 0 &&
 						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x >= 0 &&
 						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x < (*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y].size() &&
@@ -97,10 +173,19 @@ void Stage::PieceMove()
 						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y < (*field_).size())
 					{
 						collision_[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] = 1;
-						scal_[i] = kKeyScal_[0];
+						if ((*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] != 9)
+							scal_[i] = kKeyScal_[0];
 					}
 				}
 			}
+			if (scal_[i] != kKeyScal_[0])
+				piecePrePos_ = { 1000.0f,30.0f + i * 200.0f };
+
+			if (!isInFrame[0] || !isInFrame[1] || !isInFrame[2] || !isInFrame[3])
+			{
+				piecePos_[i] = piecePrePos_;
+			}
+
 		}
 	}
 }
@@ -142,19 +227,37 @@ void Stage::Init(int _stageNo)
 	piece_ = CSV_Loader::GetPointerPiece();
 
 	piecePos_.resize(piece_->size());
+	pieceSize_.resize(piece_->size());
 	scal_.resize(piece_->size());
 
 	for (int i = 0; i < piecePos_.size(); i++)
 	{
 		piecePos_[i].x = 1000.0f;
 		piecePos_[i].y = 30.0f + i * 200.0f;
+
+		piecePrePos_ = piecePos_[i];
 	}
 	collisionArrReset();
 
 	fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
 	fieldKeyPos_.x = float((int)fieldKeyPos_.x / kMapchipSize_ * kMapchipSize_);
 	fieldKeyPos_.y -= fieldSize_.y / 2 * kMapchipSize_;
-	fieldKeyPos_.y = float((int)fieldKeyPos_.y/ kMapchipSize_ * kMapchipSize_);
+	fieldKeyPos_.y = float((int)fieldKeyPos_.y / kMapchipSize_ * kMapchipSize_);
+
+
+
+	for (int i = 0; i < (*piece_).size(); i++)
+	{
+		pieceSize_[i] = { 0,0 };
+
+		for (int j = 0; j < (*piece_)[i].size(); j++)
+		{
+			if (pieceSize_[i].x < (*piece_)[i][j].size())
+				pieceSize_[i].x = (float)(*piece_)[i][j].size();
+		}
+		if (pieceSize_[i].y < (*piece_)[i].size())
+			pieceSize_[i].y = (float)(*piece_)[i].size();
+	}
 
 	isNext_ = false;
 
@@ -190,13 +293,16 @@ void Stage::Draw()
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-			Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+			if ((*field_)[y][x] != 9)
+				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
 
 	for (int i = 0; i < (*piece_).size(); i++)
 	{
+		Novice::ScreenPrintf(0, 1020 + i * 20, "%.1f,%.1f", pieceSize_[i].x, pieceSize_[i].y);
+
 		for (int y = 0; y < (*piece_)[i].size(); y++)
 		{
 			for (int x = 0; x < (*piece_)[i][y].size(); x++)
