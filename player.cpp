@@ -31,7 +31,7 @@ void Player::Update(char* keys, char* preKeys)
 		moveDir.x = 1;
 }
 
-void Player::Draw(int mapchipSize)
+void Player::Draw(int mapchipSize, Vector2 keyPos)
 {
-	Novice::DrawBox(posX * mapchipSize, posY * mapchipSize, int(size.x), int(size.y), 0, color, kFillModeSolid);
+	Novice::DrawBox(int(keyPos.x + posX * mapchipSize), int(keyPos.y + posY * mapchipSize), int(size.x), int(size.y), 0, color, kFillModeSolid);
 }

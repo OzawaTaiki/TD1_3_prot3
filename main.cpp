@@ -6,9 +6,6 @@
 
 const char kWindowTitle[] = "LC1A_07_オザワ_タイキ_タイトル";
 
-static const int kWindowWidth = 1920;
-static const int kWindowHeight = 1080;
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -54,7 +51,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		stage->Draw(kWindowWidth,kWindowHeight);
+		stage->Draw();
 
 		///
 		/// ↑描画処理ここまで
