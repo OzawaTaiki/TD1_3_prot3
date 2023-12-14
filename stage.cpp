@@ -97,7 +97,8 @@ void Stage::PieceMove()
 						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y < (*field_).size())
 					{
 						collision_[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] = 1;
-						scal_[i] = kKeyScal_[0];
+						if ((*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] != 9)
+							scal_[i] = kKeyScal_[0];
 					}
 				}
 			}
@@ -154,7 +155,7 @@ void Stage::Init(int _stageNo)
 	fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
 	fieldKeyPos_.x = float((int)fieldKeyPos_.x / kMapchipSize_ * kMapchipSize_);
 	fieldKeyPos_.y -= fieldSize_.y / 2 * kMapchipSize_;
-	fieldKeyPos_.y = float((int)fieldKeyPos_.y/ kMapchipSize_ * kMapchipSize_);
+	fieldKeyPos_.y = float((int)fieldKeyPos_.y / kMapchipSize_ * kMapchipSize_);
 
 	isNext_ = false;
 
@@ -190,8 +191,9 @@ void Stage::Draw()
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-			Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+			if ((*field_)[y][x] != 9)
+				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
 
