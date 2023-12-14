@@ -42,10 +42,13 @@ void Stage::PieceMove()
 				piecePos_[i].y + pieceSize_[i].y * kMapchipSize_ * scal_[i] > my_ &&
 				isHave_ == -1)
 			{
-				sub_.x = piecePos_[i].x - mx_;
-				sub_.y = piecePos_[i].y - my_;
-				if ((*piece_)[i][int(-sub_.y / (kMapchipSize_ * scal_[i]))][int(-sub_.x / (kMapchipSize_ * scal_[i]))] != 0)
+				sub_.x = (piecePos_[i].x - mx_) / scal_[i];
+				sub_.y = (piecePos_[i].y - my_) / scal_[i];
+				if ((*piece_)[i][int(-sub_.y * scal_[i] / (kMapchipSize_ * scal_[i]))][int(-sub_.x * scal_[i] / (kMapchipSize_ * scal_[i]))] != 0)
 				{
+					piecePos_[i].x = sub_.x + mx_;
+					piecePos_[i].y = sub_.y + my_;
+
 					scal_[i] = kKeyScal_[0];
 					isHave_ = i;
 					piecePrePos_ = piecePos_[i];
@@ -102,67 +105,67 @@ void Stage::PieceMove()
 							break;
 						}
 
-							for (int dir = 0; dir < 4; dir++)
+						for (int dir = 0; dir < 4; dir++)
+						{
+							int move = 0;
+							bool isExit = false;
+							while (!isInFrame[dir])
 							{
-								int move = 0;
-									bool isExit = false;
-									while (!isInFrame[dir])
+								switch (dir)
+								{
+								case 0://上
+									if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move) < 0)
 									{
-										switch (dir)
-										{
-										case 0://上
-											if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move) < 0)
-											{
-												isExit = true;
-												break;
-											}
-											if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
-											{
-												isInFrame[0] = true;
-											}
-											
-											break;
-										case 1://左
-											if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move) < 0)
-											{
-												isExit = true;
-												break;
-											}
-											if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
-											{
-												isInFrame[1] = true;
-											}
-											break;
-										case 2://下
-											if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move) > (*piece_)[i].size())
-											{
-												isExit = true;
-												break;
-											}
-											if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
-											{
-												isInFrame[2] = true;
-											}
-											break;
-										case 3://右
-											if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move) > (*piece_)[i][y].size())
-											{
-												isExit = true;
-												break;
-											}
-											if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
-											{
-												isInFrame[3] = true;
-											}
-											break;
-										default:
-											break;
-										}
-										move++;
-										if (isExit)
-											break;
+										isExit = true;
+										break;
 									}
+									if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
+									{
+										isInFrame[0] = true;
+									}
+
+									break;
+								case 1://左
+									if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move) < 0)
+									{
+										isExit = true;
+										break;
+									}
+									if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
+									{
+										isInFrame[1] = true;
+									}
+									break;
+								case 2://下
+									if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move) > (*piece_)[i].size())
+									{
+										isExit = true;
+										break;
+									}
+									if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
+									{
+										isInFrame[2] = true;
+									}
+									break;
+								case 3://右
+									if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move) > (*piece_)[i][y].size())
+									{
+										isExit = true;
+										break;
+									}
+									if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
+									{
+										isInFrame[3] = true;
+									}
+									break;
+								default:
+									break;
+								}
+								move++;
+								if (isExit)
+									break;
 							}
+						}
 					}
 
 					//枠内にあるかどうか
