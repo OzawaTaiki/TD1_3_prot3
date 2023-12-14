@@ -57,8 +57,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		stage->Draw();
 		UI_Manager::Draw();
+		stage->Draw();
 
 		///
 		/// ↑描画処理ここまで
