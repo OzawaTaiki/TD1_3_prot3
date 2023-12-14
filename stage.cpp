@@ -175,7 +175,14 @@ void Stage::Draw(int windowWidth, int windowHeight)
 {
 	Novice::DrawBox(0, 0, windowWidth, windowHeight, 0, 0x00000080, kFillModeSolid);
 
-	Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
+	for (int y = 0; y < 18; y++)
+	{
+		for (int x = 0; x < 18; x++)
+		{
+			Novice::DrawBox(x * 40, y * 40, 39, 39, 0, field[y][x] == 0 ? 0xffffffa0 : BLACK, kFillModeSolid);
+      Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
+		}
+	}
 
 	for (int y = 0; y < (*field_).size(); y++)
 	{

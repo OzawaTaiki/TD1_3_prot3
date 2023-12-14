@@ -2,6 +2,8 @@
 #define _USE_MATH_DEFINES
 #include <Vector2.h>
 #include <math.h>
+#include "CursorManager/CursorManager.h"
+#include "UI_Manager.h"
 #include"stage.h"
 
 const char kWindowTitle[] = "LC1A_07_オザワ_タイキ_タイトル";
@@ -19,9 +21,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
+	UI_Manager::Init();
+	
+
 	Stage* stage = new Stage;
 	stage->Init(0);
-
 	bool isFullSize = false;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -32,6 +36,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// キー入力を受け取る
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
+		CursorManager::UpdateCursorStatus();
 
 		if (keys[DIK_F11] && !preKeys[DIK_F11])
 		{
@@ -45,6 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		stage->Update(keys, preKeys);
+		UI_Manager::Update();
 
 		///
 		/// ↑更新処理ここまで
@@ -55,6 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		stage->Draw(kWindowWidth,kWindowHeight);
+		UI_Manager::Draw();
 
 		///
 		/// ↑描画処理ここまで
