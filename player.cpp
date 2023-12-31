@@ -1,6 +1,8 @@
 #include "player.h"
 #include <Novice.h>
 
+int kMoveS;
+
 Player::Player()
 {
 	posX = (int)startPos[0].x;
@@ -15,6 +17,7 @@ void Player::Init(int stageNo)
 	posX = (int)startPos[stageNo].x;
 	posY = (int)startPos[stageNo].y;
 	moveDir = { 0,0 };
+	kMoveS = Novice::LoadAudio("./sounds/move_kouho1.mp3");
 }
 
 void Player::Update(char* keys, char* preKeys)
@@ -29,6 +32,15 @@ void Player::Update(char* keys, char* preKeys)
 		moveDir.y = 1;
 	if (keys[DIK_D] && !preKeys[DIK_D])
 		moveDir.x = 1;
+
+	if (moveDir.x != 0 || moveDir.y != 0)
+	{
+		if (Novice::IsPlayingAudio(kMoveS) == 1)
+		{
+			Novice::StopAudio(kMoveS);
+		}
+		Novice::PlayAudio(kMoveS, 0, 0.5f);
+	}
 }
 
 void Player::Draw(int mapchipSize, Vector2 keyPos)

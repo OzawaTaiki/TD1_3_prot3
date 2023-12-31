@@ -4,6 +4,10 @@
 #include "player.h"
 #include "CSVLoader.h"
 
+int kSounds[3];
+int kUI;
+bool habe[2];
+
 void Stage::collisionArrReset()
 {
 	int i, j;
@@ -52,6 +56,9 @@ void Stage::PieceMove()
 					scal_[i] = kKeyScal_[0];
 					isHave_ = i;
 					piecePrePos_ = piecePos_[i];
+					Novice::PlayAudio(kSounds[0], 0, 0.5f);
+					habe[0] = false;
+					habe[1] = false;
 					break;
 				}
 			}
@@ -178,6 +185,10 @@ void Stage::PieceMove()
 						collision_[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] = 1;
 						if ((*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] != 9)
 							scal_[i] = kKeyScal_[0];
+						if (habe[0] == false)
+						{
+							habe[0] = true;
+						}
 					}
 				}
 			}
@@ -186,7 +197,16 @@ void Stage::PieceMove()
 
 			if (!isInFrame[0] || !isInFrame[1] || !isInFrame[2] || !isInFrame[3])
 			{
+				
 				piecePos_[i] = piecePrePos_;
+			}
+			else
+			{
+				if (habe[0] == true && habe[1] == false)
+				{
+					Novice::PlayAudio(kSounds[2], 0, 0.5f);
+					habe[1] = true;
+				}
 			}
 
 		}
@@ -217,6 +237,13 @@ Stage::Stage()
 
 void Stage::Init(int _stageNo)
 {
+
+	kSounds[0] = Novice::LoadAudio("./sounds/grip_kouho1.mp3");
+	kSounds[2] = Novice::LoadAudio("./sounds/put_kouho1.mp3");
+	habe[0] = false;
+	habe[1] = false;
+	kUI = Novice::LoadTexture("./img/UI.png");
+
 	fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
 
 	piecePos_.clear();
@@ -316,4 +343,6 @@ void Stage::Draw()
 	}
 
 	player_->Draw(kMapchipSize_, fieldKeyPos_);
+
+	Novice::DrawSprite(0, 0, kUI, 1.0f, 1.0f, 0.0f, 0xffffffff);
 }
