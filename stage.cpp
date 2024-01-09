@@ -87,7 +87,7 @@ void Stage::PieceMove()
 			piecePos_[i].y = float(int(piecePos_[i].y / kMapchipSize_ + (int(piecePos_[i].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 			piecePos_[i].x = float(int(piecePos_[i].x / kMapchipSize_ + (int(piecePos_[i].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 
-			scal_[i] = kKeyScal_[1];
+			scal_[i] = kKeyScal_[1];//0.75
 
 			for (int y = 0; y < (*piece_)[i].size(); y++)
 			{
@@ -100,11 +100,13 @@ void Stage::PieceMove()
 						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y >= fieldSize_.y)
 						continue;
 
+
 					//走査中の座標にプレイヤーがいるとき
 					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x == player_->GetPosX() &&
 						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y == player_->GetPosY())
 					{
 						//プレイヤーとピースの枠が重なってるとき
+
 						if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_))][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_))] == 1)
 						{
 							isInFrame[0] = true;
@@ -113,8 +115,8 @@ void Stage::PieceMove()
 
 						for (int dir = 0; dir < 4; dir++)
 						{
-							int move = 0;
-							bool isExit = false;
+							int move = 0;			//判定移動分
+							bool isExit = false;	//強制退場用フラグ
 							while (!isInFrame[dir])
 							{
 								switch (dir)
@@ -312,9 +314,11 @@ void Stage::Update(char* keys, char* preKeys)
 	collisionArrReset();
 	PieceMove();
 
-	player_->Input(keys, preKeys);
 
-	player_->Move(playerCollision());
+	if (isHave_ == -1)
+		player_->Update(keys, preKeys);
+	playerCollision();
+
 }
 
 void Stage::Draw()
