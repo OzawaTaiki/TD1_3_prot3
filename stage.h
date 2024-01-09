@@ -74,6 +74,8 @@ class Stage
 
 	bool UnStackBlockCheck(int x, int y);
 
+	bool isInPiece(int checkX, int checkY,int x, int y, int pieceNum);
+
 public:
 	Stage();
 
