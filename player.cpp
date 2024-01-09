@@ -26,7 +26,6 @@ void Player::Input(char* keys, char* preKeys)
 
 void Player::Move(int _endPos)
 {
-
 	if (t >= 1)
 	{
 		t = 0;

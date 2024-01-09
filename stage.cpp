@@ -217,7 +217,7 @@ bool Stage::UnStackBlockCheck(int x, int y)
 }
 
 
-void Stage::playerCollision()
+int Stage::playerCollision()
 
 {
 	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
@@ -313,11 +313,11 @@ void Stage::Update(char* keys, char* preKeys)
 
 	collisionArrReset();
 	PieceMove();
+		
 
+	player_->Input(keys, preKeys);
 
-	if (isHave_ == -1)
-		player_->Update(keys, preKeys);
-	playerCollision();
+	player_->Move(playerCollision());
 
 }
 
