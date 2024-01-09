@@ -13,6 +13,7 @@ class Player
 	int endPos;
 
 	float t = 0;
+	float easedT = 0;
 	float addT = 0.05f;
 
 	const Vector2 startPos[10] = {

@@ -1,4 +1,5 @@
-#include "player.h"
+﻿#include "player.h"
+#include "PhilliaFunction/Phill.h"	// イージングをするために必要
 #include <Novice.h>
 
 void Player::Input(char* keys, char* preKeys)
@@ -29,6 +30,7 @@ void Player::Move(int _endPos)
 	if (t >= 1)
 	{
 		t = 0;
+		easedT = 0;
 		keepDir = { 0,0 };
 		posX = (int)DrawPos.x / 40;
 		posY = (int)DrawPos.y / 40;
@@ -46,10 +48,13 @@ void Player::Move(int _endPos)
 		if (t >= 1)
 			t = 1;
 	}
+
+	easedT = Phill::EaseInOutQuart(t);
+
 	if (keepDir.x != 0)
-		DrawPos.x = ((1.0f - t) * posX + t * endPos) * 40;
+		DrawPos.x = ((1.0f - easedT) * posX + easedT * endPos) * 40;
 	if (keepDir.y != 0)
-		DrawPos.y = ((1.0f - t) * posY + t * endPos) * 40;
+		DrawPos.y = ((1.0f - easedT) * posY + easedT * endPos) * 40;
 
 	/*Novice::ScreenPrintf(0, 0, "t : %f", t);
 	Novice::ScreenPrintf(0, 20, "dir : %.1f,%.1f", keepDir.x, keepDir.y);
@@ -63,6 +68,7 @@ Player::Player(int mapchipSize)
 	posY = (int)startPos[0].y;
 	DrawPos = { (float)posX * mapchipSize,(float)posY * mapchipSize };
 	t = 0;
+	easedT = 0;
 	size = { 32,32 };
 	moveDir = { 0,0 };
 	keepDir = { 0,0 };

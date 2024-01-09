@@ -14,6 +14,9 @@
     <Filter Include="KamataEngine\Adapter">
       <UniqueIdentifier>{c6468eb4-788b-4a83-b207-a5f4804e56c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PhilliaFunction">
+      <UniqueIdentifier>{6cdba095-843f-4d88-b485-31a0649568ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -46,6 +49,15 @@
     </ClCompile>
     <ClCompile Include="CSVLoader.cpp">
       <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\Phill.cpp">
+      <Filter>PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\PhillEasing.cpp">
+      <Filter>PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="PhilliaFunction\TCPIP.cpp">
+      <Filter>PhilliaFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,5 +135,8 @@
     <ClInclude Include="stage.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="CSVLoader.h" />
+    <ClInclude Include="PhilliaFunction\Phill.h">
+      <Filter>PhilliaFunction</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
