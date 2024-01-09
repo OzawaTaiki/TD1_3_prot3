@@ -69,7 +69,7 @@ class Stage
 
 	void PieceMove();
 
-	void playerCollision();
+	int playerCollision();
 
 	bool UnStackBlockCheck(int x, int y);
 

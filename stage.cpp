@@ -200,12 +200,12 @@ void Stage::PieceMove()
 			{
 				piecePos_[i] = piecePrePos_;
 			}
-
 		}
 	}
 	Novice::ScreenPrintf(900, 1020, "%.1f,%.1f", piecePrePos_.x, piecePrePos_.y);
 
 }
+
 
 
 bool Stage::UnStackBlockCheck(int x, int y)
@@ -216,7 +216,10 @@ bool Stage::UnStackBlockCheck(int x, int y)
 
 
 void Stage::playerCollision()
+
 {
+	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
+		isNext_ = true;
 	if (player_->GetMoveDir().x != 0 || player_->GetMoveDir().y != 0)
 	{
 		int k = 0;
@@ -225,17 +228,21 @@ void Stage::playerCollision()
 			k++;
 		}
 		k--;
-		player_->SetPos(int(player_->GetPosX() + player_->GetMoveDir().x * k), int(player_->GetPosY() + player_->GetMoveDir().y * k));
+
+
+		if (player_->GetMoveDir().x != 0)
+			return int(player_->GetPosX() + player_->GetMoveDir().x * k);
+		if (player_->GetMoveDir().y != 0)
+			return int(player_->GetPosY() + player_->GetMoveDir().y * k);
 	}
 
-	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
-		isNext_ = true;
+	return -1;
 }
 
 
 Stage::Stage()
 {
-	player_ = new Player;
+	player_ = new Player(kMapchipSize_);
 }
 
 void Stage::Init(int _stageNo)
@@ -305,8 +312,9 @@ void Stage::Update(char* keys, char* preKeys)
 	collisionArrReset();
 	PieceMove();
 
-	player_->Update(keys, preKeys);
-	playerCollision();
+	player_->Input(keys, preKeys);
+
+	player_->Move(playerCollision());
 }
 
 void Stage::Draw()
@@ -339,5 +347,5 @@ void Stage::Draw()
 		}
 	}
 
-	player_->Draw(kMapchipSize_, fieldKeyPos_);
+	player_->Draw(fieldKeyPos_);
 }
