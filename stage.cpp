@@ -304,7 +304,7 @@ void Stage::Draw()
 		{
 			if ((*field_)[y][x] != 9)
 				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
 

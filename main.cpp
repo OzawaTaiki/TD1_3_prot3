@@ -3,8 +3,11 @@
 #include <Vector2.h>
 #include <math.h>
 #include"stage.h"
+#include "SceneChange.h"
+#include <time.h>
 
 const char kWindowTitle[] = "LC1A_07_オザワ_タイキ_タイトル";
+
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -18,8 +21,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Stage* stage = new Stage;
 	stage->Init(0);
+	SceneChange* sceneC = new SceneChange;
 
 	bool isFullSize = false;
+
+	srand(unsigned int(time(nullptr)));
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -36,11 +42,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::SetWindowMode(isFullSize ? kFullscreen : kWindowed);
 		}
 
-
 		///
 		/// ↓更新処理ここから
 		///
-
+		sceneC->Update();
 		stage->Update(keys, preKeys);
 
 		///
@@ -52,6 +57,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		stage->Draw();
+		sceneC->Draw();
 
 		///
 		/// ↑描画処理ここまで
