@@ -282,7 +282,8 @@ void Stage::Update(char* keys, char* preKeys)
 	collisionArrReset();
 	PieceMove();
 
-	player_->Update(keys, preKeys);
+	if (isHave_ == -1)
+		player_->Update(keys, preKeys);
 	playerCollision();
 }
 
