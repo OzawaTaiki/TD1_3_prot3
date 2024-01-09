@@ -117,6 +117,9 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="CSVLoader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhilliaFunction\Phill.cpp" />
+    <ClCompile Include="PhilliaFunction\PhillEasing.cpp" />
+    <ClCompile Include="PhilliaFunction\TCPIP.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="stage.cpp" />
   </ItemGroup>
@@ -149,6 +152,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="CSVLoader.h" />
+    <ClInclude Include="PhilliaFunction\Phill.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="stage.h" />
   </ItemGroup>
