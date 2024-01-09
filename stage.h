@@ -9,7 +9,7 @@ static const int kWindowHeight = 1080;
 
 const int kMaxFieldSize_ = 18;
 const int kMaxPieceNum_ = 10;
-const int kMaxTileNum_ = 3;//NONE,WALL,GOAL
+const int kMaxTileNum_ = 4;//NONE,WALL,GOAL,unStackBlock
 
 class Stage
 {
@@ -29,7 +29,8 @@ class Stage
 	const unsigned int kTileColor_[kMaxTileNum_] = {
 		0xffffffff,
 		0x000000ff,
-		0xff0000ff
+		0xff0000ff,
+		0x00ff00ff
 	};
 
 	//pieceの色(ChatGPT君セレクト)
@@ -57,7 +58,7 @@ class Stage
 
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
-		"./data/-_testStage2.csv",
+		"./data/-_test.csv",
 		"./data/-_testStage3.csv",
 		"./data/-_testStage4.csv"
 	};
@@ -69,6 +70,8 @@ class Stage
 	void PieceMove();
 
 	void playerCollision();
+
+	bool UnStackBlockCheck(int x, int y);
 
 public:
 	Stage();
