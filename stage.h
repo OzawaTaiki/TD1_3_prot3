@@ -58,9 +58,10 @@ class Stage
 
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
-		"./data/-_test.csv",
+		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
-		"./data/-_testStage4.csv"
+		"./data/-_test.csv",
+		//"./data/-_testStage4.csv"
 	};
 
 	Player* player_;
