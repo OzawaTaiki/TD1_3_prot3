@@ -65,7 +65,7 @@ class Stage
 	const char* stageFilePath_[64] = {
 		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
-		"./data/-_test.csv",
+		"./data/-_testStage4.csv",
 		//"./data/-_testStage4.csv"
 	};
 
