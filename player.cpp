@@ -73,6 +73,7 @@ Player::Player(int mapchipSize)
 	keepDir = { 0,0 };
 	color = 0x0000ffff;
 	isMove = false;
+	playerTexture = Novice::LoadTexture("./img/player.png");
 }
 
 void Player::Init(int stageNo)
@@ -87,5 +88,6 @@ void Player::Init(int stageNo)
 
 void Player::Draw(Vector2 keyPos)
 {
-	Novice::DrawBox(int(keyPos.x + DrawPos.x), int(keyPos.y + DrawPos.y), int(size.x), int(size.y), 0, color, kFillModeSolid);
+	Phill::DrawQuadPlus(int(keyPos.x + DrawPos.x) + 20, int(keyPos.y + DrawPos.y) + 20, int(size.x), int(size.y), 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, playerTexture, 0xffffffff, PhillDrawMode::DrawMode_Center);
+	//Novice::DrawBox(int(keyPos.x + DrawPos.x), int(keyPos.y + DrawPos.y), int(size.x), int(size.y), 0, color, kFillModeSolid);
 }
