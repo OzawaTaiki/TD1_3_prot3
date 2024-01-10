@@ -3,6 +3,7 @@
 #include <vector>
 
 class Player;
+class DigPiece;
 
 static const int kWindowWidth = 1920;
 static const int kWindowHeight = 1080;
@@ -48,7 +49,7 @@ class Stage
 	};
 
 	Vector2 fieldSize_ = { 0,0 };										//fieldの最大のサイズ
-	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };	//field の基準座標
+	Vector2 fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };	//field の基準座標	左上
 	Vector2 sub_ = { 0,0 };												//マウスとpieceの差
 	Vector2 piecePrePos_;												//pieceの前の座標
 	int isHave_ = -1;													//piece所持フラグ -1:もってない 0~:番号のピース所持
@@ -65,6 +66,7 @@ class Stage
 	};
 
 	Player* player_;
+	DigPiece* digPiece_;
 
 	void collisionArrReset();
 

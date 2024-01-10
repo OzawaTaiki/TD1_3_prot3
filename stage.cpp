@@ -2,6 +2,7 @@
 #include <Novice.h>
 
 #include "player.h"
+#include "digPiece.h"
 #include "CSVLoader.h"
 
 void Stage::collisionArrReset()
@@ -245,33 +246,34 @@ int Stage::playerCollision()
 Stage::Stage()
 {
 	player_ = new Player(kMapchipSize_);
+	digPiece_ = new DigPiece;
 }
 
 void Stage::Init(int _stageNo)
 {
 	fieldKeyPos_ = { kWindowWidth * 1 / 3,kWindowHeight / 2 };
 
-	piecePos_.clear();
+	//piecePos_.clear();
 	scal_.clear();
 	if (field_ != nullptr)		field_->clear();
-	if (piece_ != nullptr)		piece_->clear();
+	//if (piece_ != nullptr)		piece_->clear();
 
 	CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
 
 	field_ = CSV_Loader::GetPointerMapchip();
-	piece_ = CSV_Loader::GetPointerPiece();
+	//piece_ = CSV_Loader::GetPointerPiece();
 
-	piecePos_.resize(piece_->size());
-	pieceSize_.resize(piece_->size());
-	scal_.resize(piece_->size());
+	//piecePos_.resize(piece_->size());
+	//pieceSize_.resize(piece_->size());
+	//scal_.resize(piece_->size());
 
-	for (int i = 0; i < piecePos_.size(); i++)
+	/*for (int i = 0; i < piecePos_.size(); i++)
 	{
 		piecePos_[i].x = 1000.0f;
 		piecePos_[i].y = 30.0f + i * 200.0f;
 
 		piecePrePos_ = piecePos_[i];
-	}
+	}*/
 	collisionArrReset();
 
 	fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
@@ -281,7 +283,7 @@ void Stage::Init(int _stageNo)
 
 
 
-	for (int i = 0; i < (*piece_).size(); i++)
+	/*for (int i = 0; i < (*piece_).size(); i++)
 	{
 		pieceSize_[i] = { 0,0 };
 
@@ -292,11 +294,12 @@ void Stage::Init(int _stageNo)
 		}
 		if (pieceSize_[i].y < (*piece_)[i].size())
 			pieceSize_[i].y = (float)(*piece_)[i].size();
-	}
+	}*/
 
 	isNext_ = false;
 
 	player_->Init(_stageNo);
+	digPiece_->Init(fieldSize_);
 }
 
 void Stage::Update(char* keys, char* preKeys)
@@ -312,8 +315,8 @@ void Stage::Update(char* keys, char* preKeys)
 	}
 
 	collisionArrReset();
-	PieceMove();
-		
+	//PieceMove();
+	digPiece_->Update(fieldKeyPos_, fieldSize_, kMapchipSize_);
 
 	player_->Input(keys, preKeys);
 
@@ -336,9 +339,9 @@ void Stage::Draw()
 			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
+	Novice::DrawEllipse(int(fieldKeyPos_.x), int(fieldKeyPos_.y), 3, 3, 0, 0xff0000ff, kFillModeSolid);
 
-
-	for (int i = 0; i < (*piece_).size(); i++)
+	/*for (int i = 0; i < (*piece_).size(); i++)
 	{
 		Novice::ScreenPrintf(0, 1020 + i * 20, "%.1f,%.1f", pieceSize_[i].x, pieceSize_[i].y);
 
@@ -349,7 +352,7 @@ void Stage::Draw()
 				Novice::DrawBox(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
 			}
 		}
-	}
-
+	}*/
+	digPiece_->Draw(fieldKeyPos_, kMapchipSize_);
 	player_->Draw(fieldKeyPos_);
 }

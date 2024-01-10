@@ -116,6 +116,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="CSVLoader.cpp" />
+    <ClCompile Include="digPiece.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PhilliaFunction\Phill.cpp" />
     <ClCompile Include="PhilliaFunction\PhillEasing.cpp" />
@@ -155,6 +156,8 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="PhilliaFunction\Phill.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="stage.h" />
+    <ClInclude Include="digPiece.h" />
+    <ClInclude Include="intVec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
