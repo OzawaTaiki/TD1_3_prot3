@@ -26,20 +26,34 @@ SceneChange::SceneChange()
     // しょきか
     initialized                 = false;
     frameCount_current          = 0;
-    frameCount_target           = 60;
-    frameCount_interval         = 1;        // タイルを開く間隔(1F~)
+    frameTarget_interval        = 1;                            // タイルを開く間隔(1F~)
+    frameCount_finished         = 0;
     tileSize                    = 120;
     seqOrderIndex               = 0;        
-    openPerOnce                 = 2;        // 一度に開くタイル数を指定できる
-    kWhiteTexture = Novice::LoadTexture("white1x1.png");
+    openPerOnce                 = 2;                            // 一度に開くタイル数を指定する
+    imgPath                     = "./img/pieceBlock.png";       // ブロックの画像データのパスを指定する
+    posX_interpo                = 0;
+    frameTarget_open            = 60;
+    beginExit                   = 0;
+    frameBuffer_beginExit       = 0;
+    constantT_exit              = 0;
+    easedT_exit                 = 0;
+    frameTarget_between         = 120;
+    frameTarget_exit            = 60;
+
+    isEnd = 0;
+
+    kWhiteTexture               = Novice::LoadTexture("white1x1.png");
+    blockTexture                = Novice::LoadTexture(imgPath);
+    
     
     for (int i = 0; i < 9; i++)
         for (int j = 0; j < 16; j++)
         {
             tileFlapped[i][j] = 0;
-            frameCount_buffer[i][j] = 0;
-            constantT[i][j] = 0.0f;
-            easedT[i][j] = 1.0f;
+            frameBuffer[i][j] = 0;
+            constantT_open[i][j] = 0.0f;
+            easedT_open[i][j] = 1.0f;
             color[i][j] = 0;
             sequentialOrder[16 * i + j] = 16 * i + j;
         }
@@ -53,23 +67,17 @@ void SceneChange::Update()
     /// 初期化時に...
     if (!initialized)
     {
-        // 色をランダムに決める
-        for (int i = 0; i < 9; i++)
+        for(int i = 0; i < 9; i++)
             for (int j = 0; j < 16; j++)
             {
-                int R = rand() % 0xff;
-                int G = rand() % 0xff;
-                int B = rand() % 0xff;
-                color[i][j] = R;
-                color[i][j] = (color[i][j] << 8) + G;
-                color[i][j] = (color[i][j] << 8) + B;
-                color[i][j] = (color[i][j] << 8) + 0xff;
+                color[i][j] = rand() % 7;
             }
+
         initialized = true;
     }
 
     /// インターバル毎にtileをtrueに変えていく...
-    if (frameCount_current % frameCount_interval == 0 && seqOrderFinished != 1)
+    if (frameCount_current % frameTarget_interval == 0 && seqOrderFinished != 1)
     {
         // openPerOnceの回数分ループ
         for (int i = 0; i < openPerOnce && seqOrderIndex < 144; i++)
@@ -82,30 +90,59 @@ void SceneChange::Update()
         }
     }
     /// すべてのタイルが終了したかどうか...
-    if (seqOrderIndex >= 144) seqOrderFinished = 1;
-
+    if (seqOrderIndex >= 144 && !seqOrderFinished)
+    {
+        seqOrderFinished = 1;
+        frameCount_finished = frameCount_current;
+    }
     for (int i = 0; i < 9; i++)
         for (int j = 0; j < 16; j++)
         {
             /// tileがtrueになったら...
             if (tileFlapped[i][j] == 1)
             {
-                if (frameCount_buffer[i][j] == 0)
+                if (frameBuffer[i][j] == 0)
                 {
                     // 最初に、タイル毎のbeginFrameをカキコ
-                    frameCount_buffer[i][j] = frameCount_current;
+                    frameBuffer[i][j] = frameCount_current;
                 }
 
-                constantT[i][j] = float(frameCount_current - frameCount_buffer[i][j]) / float(frameCount_target);
+                constantT_open[i][j] = float(frameCount_current - frameBuffer[i][j]) / float(frameTarget_open);
                 /// タイルの演出が終わったら...
-                if (constantT[i][j] == 1.0f) tileFlapped[i][j] = 0;
+                if (constantT_open[i][j] == 1.0f) tileFlapped[i][j] = 0;
             }
 
             // イージングを算出し代入する
             // TODO: イージングの種類を変更できる
-            easedT[i][j] = Phill::EaseOutBounce(constantT[i][j]);
+            easedT_open[i][j] = Phill::EaseOutBounce(constantT_open[i][j]);
         }
-    
+
+    if (seqOrderFinished)
+    {
+        if (frameCount_current - frameCount_finished > frameTarget_between && !beginExit)
+        {
+            beginExit = 1;
+            frameBuffer_beginExit = frameCount_current;
+        }
+
+        if (beginExit)
+        {
+            constantT_exit = float(frameCount_current - frameBuffer_beginExit) / float(frameTarget_exit);
+
+            // TODO: イージングの種類を変更できる
+            easedT_exit = Phill::EaseInOutQuart(constantT_exit);
+
+            posX_interpo = int(1920 * easedT_exit);
+        }
+
+        if (constantT_exit == 1.0f)
+        {
+            beginExit = 0;
+        }
+
+    }
+
+    if (seqOrderFinished && beginExit == 0 && constantT_exit == 1.0f) isEnd = 1;
 
     // 現在フレームを更新(一番最後に処理)
     frameCount_current++;
@@ -119,17 +156,22 @@ void SceneChange::Draw()
         for (int cols = 0; cols < 16; cols++)
         {
             Phill::DrawQuadPlus(
-                cols * tileSize + tileSize / 2, rows * tileSize + tileSize / 2,
+                cols * tileSize + tileSize / 2 + posX_interpo, rows * tileSize + tileSize / 2,
                 tileSize, tileSize,
-                easedT[rows][cols], easedT[rows][cols],
+                easedT_open[rows][cols], easedT_open[rows][cols],
                 0.0f,
-                0, 0,
-                1, 1,
-                kWhiteTexture,
-                color[rows][cols],
+                tileSize * color[rows][cols], 0,
+                tileSize, tileSize,
+                blockTexture,
+                0xffffffff,
                 PhillDrawMode::DrawMode_Center
             );
         }
     }
 
+}
+
+int SceneChange::GetIsEnd() const
+{
+    return isEnd;
 }

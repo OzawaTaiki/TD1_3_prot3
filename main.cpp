@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Stage* stage = new Stage;
 	stage->Init(0);
-	SceneChange* sceneC = new SceneChange;
+	SceneChange* sceneChange = nullptr;
 
 	bool isFullSize = false;
 
@@ -45,7 +45,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		sceneC->Update();
+
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] && !sceneChange)
+		{
+			sceneChange = new SceneChange;
+		}
+
+		if (sceneChange)
+		{
+			sceneChange->Update();
+		}
+
 		stage->Update(keys, preKeys);
 
 		///
@@ -57,8 +67,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		stage->Draw();
-		sceneC->Draw();
 
+		if (sceneChange)
+		{
+			sceneChange->Draw();
+			if (sceneChange->GetIsEnd())
+			{
+				delete sceneChange;
+				sceneChange = nullptr;
+			}
+		}
 		///
 		/// ↑描画処理ここまで
 		///
