@@ -15,9 +15,9 @@ void Phill::Init()
 	callCnt = 0;
 }
 
+bool Phill::isDebugMode = false;
 #ifdef _DEBUG
 
-bool Phill::isDebugMode = false;
 void Phill::SetDebugMode(DebugMode mode)
 {
 	switch (mode)

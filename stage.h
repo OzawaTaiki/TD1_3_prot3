@@ -16,8 +16,18 @@ class Stage
 {
 	const int kMapchipSize_ = 40;
 	
+	int blockTexture;
 	int pieceTexture;
 	int goalTexture;
+	int backGroundTexture;
+	int obstacleTexture;
+
+	int stageCntTexture[3];
+	int slashTexture;
+
+	int maxStages = 3;
+
+	int isClear;
 
 	std::vector<std::vector<int>>* field_;
 	std::vector<std::vector<int>> collision_;
@@ -59,7 +69,6 @@ class Stage
 	int mx_, my_;														// マウスカーソルの座標
 	int selectStage_ = 0;												// ステージナンバー
 	bool isNext_;														// クリアフラグ
-	int backGroundTexture;												// 
 
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
@@ -91,4 +100,7 @@ public:
 
 	void Draw();
 
+	int GetIsClear() const;
+
+	SceneChange* GetSceneChgPtr();
 };
