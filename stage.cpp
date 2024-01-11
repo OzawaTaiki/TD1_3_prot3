@@ -250,6 +250,8 @@ Stage::Stage()
 	stageCntTexture[1]  = Novice::LoadTexture("./img/stage2.png");
 	stageCntTexture[2]  = Novice::LoadTexture("./img/stage3.png");
 	slashTexture		= Novice::LoadTexture("./img/sl.png");
+	descriptionTexture	= Novice::LoadTexture("./img/desc.png");
+	controllTexture		= Novice::LoadTexture("./img/ctrl.png");
 
 	player_ = new Player(kMapchipSize_);
 }
@@ -273,6 +275,8 @@ void Stage::Init(int _stageNo)
 		piecePos_.resize(piece_->size());
 		pieceSize_.resize(piece_->size());
 		scal_.resize(piece_->size());
+
+		isViewDescription = 0;
 
 		for (int i = 0; i < piecePos_.size(); i++)
 		{
@@ -320,6 +324,12 @@ void Stage::Update(char* keys, char* preKeys)
 {
 	//if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
 	//	isNext_ = true;
+
+	if (keys[DIK_TAB] && !preKeys[DIK_TAB])
+	{
+		isViewDescription++;
+		isViewDescription %= 2;
+	}
 
 	if (isNext_ || sceneChange_)
 	{
@@ -405,6 +415,9 @@ void Stage::Draw()
 	}
 
 	player_->Draw(fieldKeyPos_);
+
+	Phill::DrawQuadPlus(1920 / 2, 1080 / 2, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
+	Phill::DrawQuadPlus(50, 800, 550, 220, 1.0f, 1.0f, 0.0f, 0, 0, 550, 220, controllTexture, 0xffffffff, DrawMode_LeftTop);
 
 	if (sceneChange_)
 	{

@@ -21,11 +21,15 @@ class Stage
 	int goalTexture;
 	int backGroundTexture;
 	int obstacleTexture;
+	int descriptionTexture;
+	int controllTexture;
 
 	int stageCntTexture[3];
 	int slashTexture;
 
 	int maxStages = 3;
+
+	int isViewDescription;
 
 	int isClear;
 
