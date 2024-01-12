@@ -380,6 +380,10 @@ void Stage::Draw()
 
 	//Novice::ScreenPrintf(mx_, my_, "( %4d , %4d )", mx_, my_);
 
+	Phill::DrawQuadPlus(240 + 15, 180 + 15 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[selectStage_], 0x00000020, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 15 + 70, 172 + 15 + stageNumY, 32, 64, 1.0f, 1.0f, 0.0f, 0, 0, 32, 64, slashTexture, 0x00000020, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 15 + 48 * 3, 180 + 15 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[2], 0x00000020, DrawMode_LeftTop);
+
 	Phill::DrawQuadPlus(240, 180 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[selectStage_], 0xffffffff, DrawMode_LeftTop);
 	Phill::DrawQuadPlus(240 + 70, 172 + stageNumY, 32, 64, 1.0f, 1.0f, 0.0f, 0, 0, 32, 64, slashTexture, 0xffffffff, DrawMode_LeftTop);
 	Phill::DrawQuadPlus(240 + 48 * 3, 180 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[2], 0x000000ff, DrawMode_LeftTop);
@@ -421,8 +425,9 @@ void Stage::Draw()
 
 	player_->Draw(fieldKeyPos_);
 
-	Phill::DrawQuadPlus(1920 / 2, 1080 / 2, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
-	Phill::DrawQuadPlus(50, 800, 550, 220, 1.0f, 1.0f, 0.0f, 0, 0, 550, 220, controllTexture, 0xffffffff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(1920 / 2, 1080 / 2 + stageNumY, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
+	Phill::DrawQuadPlus(50 + 15, 800 + 15 + stageNumY, 550, 220, 1.0f, 1.0f, 0.0f, 0, 0, 550, 220, controllTexture, 0x00000020, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(50, 800 + stageNumY, 550, 220, 1.0f, 1.0f, 0.0f, 0, 0, 550, 220, controllTexture, 0xffffffff, DrawMode_LeftTop);
 
 	if (sceneChange_)
 	{
