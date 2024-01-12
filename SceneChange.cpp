@@ -30,7 +30,7 @@ SceneChange::SceneChange()
     frameCount_finished         = 0;
     tileSize                    = 120;
     seqOrderIndex               = 0;        
-    openPerOnce                 = 4;                            // 一度に開くタイル数を指定する
+    openPerOnce                 = 3;                            // 一度に開くタイル数を指定する
     imgPath                     = "./img/pieceBlock.png";       // ブロックの画像データのパスを指定する
     posX_interpo                = 0;
     frameTarget_open            = 60;
@@ -38,7 +38,7 @@ SceneChange::SceneChange()
     frameBuffer_beginExit       = 0;
     constantT_exit              = 0;
     easedT_exit                 = 0;
-    frameTarget_between         = 20;
+    frameTarget_between         = 0;
     frameTarget_exit            = 60;
 
     rows_buffer                 = 0;
@@ -139,8 +139,9 @@ void SceneChange::Update()
         {
             constantT_exit = float(frameCount_current - frameBuffer_beginExit) / float(frameTarget_exit);
 
+            // 退場時のイージング
             // TODO: イージングの種類を変更できる
-            easedT_exit = Phill::EaseInOutQuart(constantT_exit);
+            easedT_exit = Phill::EaseInQuart(constantT_exit);
 
             posX_interpo = int(1920 * easedT_exit);
         }

@@ -17,6 +17,15 @@
     <Filter Include="PhilliaFunction">
       <UniqueIdentifier>{6cdba095-843f-4d88-b485-31a0649568ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{42117ec1-6356-4c8e-beca-8a495eff3a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{82c4773a-22ae-4e96-a091-4f5b87b0caf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Pause">
+      <UniqueIdentifier>{423914e8-bc16-4531-8474-6c5d363e6bf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -58,6 +67,27 @@
     </ClCompile>
     <ClCompile Include="PhilliaFunction\TCPIP.cpp">
       <Filter>PhilliaFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChange.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Button.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Checkbox.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Slider.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_ToolKit.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseScreen.cpp">
+      <Filter>Scene\Pause</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +167,26 @@
     <ClInclude Include="CSVLoader.h" />
     <ClInclude Include="PhilliaFunction\Phill.h">
       <Filter>PhilliaFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneChange.h" />
+    <ClInclude Include="UI\Button.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Checkbox.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Slider.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_ToolKit.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_ToolKit_Defines.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CursorManager.h" />
+    <ClInclude Include="PauseScreen.h">
+      <Filter>Scene\Pause</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

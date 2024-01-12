@@ -275,7 +275,8 @@ void Stage::Init(int _stageNo)
 		piecePos_.resize(piece_->size());
 		pieceSize_.resize(piece_->size());
 		scal_.resize(piece_->size());
-
+		stageNumY = 0;
+		theta = 0;
 		isViewDescription = 0;
 
 		for (int i = 0; i < piecePos_.size(); i++)
@@ -322,8 +323,10 @@ void Stage::Init(int _stageNo)
 
 void Stage::Update(char* keys, char* preKeys)
 {
-	//if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
-	//	isNext_ = true;
+#ifdef _DEBUG
+	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
+		isNext_ = true;
+#endif // _DEBUG
 
 	if (keys[DIK_TAB] && !preKeys[DIK_TAB])
 	{
@@ -354,6 +357,8 @@ void Stage::Update(char* keys, char* preKeys)
 
 		return;
 	}
+	theta += 1.0f / 256.0f * float(3.1415926535);
+	stageNumY = int(20 * sinf(theta));
 
 	collisionArrReset();
 	PieceMove();
@@ -375,9 +380,9 @@ void Stage::Draw()
 
 	//Novice::ScreenPrintf(mx_, my_, "( %4d , %4d )", mx_, my_);
 
-	Phill::DrawQuadPlus(240, 180, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[selectStage_], 0xffffffff, DrawMode_LeftTop);
-	Phill::DrawQuadPlus(240 + 70, 172, 32, 64, 1.0f, 1.0f, 0.0f, 0, 0, 32, 64, slashTexture, 0xffffffff, DrawMode_LeftTop);
-	Phill::DrawQuadPlus(240 + 48 * 3, 180, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[2], 0x000000ff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240, 180 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[selectStage_], 0xffffffff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 70, 172 + stageNumY, 32, 64, 1.0f, 1.0f, 0.0f, 0, 0, 32, 64, slashTexture, 0xffffffff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 48 * 3, 180 + stageNumY, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[2], 0x000000ff, DrawMode_LeftTop);
 
 	for (int y = 0; y < (*field_).size(); y++)
 	{

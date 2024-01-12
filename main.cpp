@@ -1,8 +1,11 @@
-#include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <Vector2.h>
 #include <math.h>
 #include"stage.h"
+#include "PauseScreen.h"
+#include <Novice.h>
+#include "CursorManager.h"
+
 
 const char kWindowTitle[] = "1304_ゲームタイトル";
 
@@ -19,7 +22,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Stage* stage = new Stage;
 	stage->Init(0);
 
+	PauseScreen* pauseScreen = nullptr;
+
 	bool isFullSize = false;
+
+	int pauseCnt = 0;
 
 	//SceneChange* sceneChange_from_stage = nullptr;
 
@@ -40,10 +47,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::SetWindowMode(isFullSize ? kFullscreen : kWindowed);
 		}
 
-
 		///
 		/// ↓更新処理ここから
 		///
+
+		CursorManager::UpdateCursorStatus();
 
 		if (stage)
 		{
@@ -64,6 +72,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//}
 		}
 
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE])
+		{
+			if (!pauseScreen)
+			{
+				pauseScreen = new PauseScreen();
+				pauseCnt = 1;
+			}
+			else
+			{
+				pauseCnt = 0;
+			}
+		}
+
+		if (pauseScreen) 
+		{
+			if (pauseCnt == 0) pauseScreen->ClosePop();
+			pauseScreen->Update();
+			if (pauseScreen->Deletable())
+			{
+				delete pauseScreen;
+				pauseScreen = nullptr;
+				pauseCnt = 0;
+			}
+		}
+		
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -74,6 +108,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (stage) stage->Draw();
 
+		if (pauseScreen)
+		{
+			pauseScreen->Draw();
+		}
 		///
 		/// ↑描画処理ここまで
 		///

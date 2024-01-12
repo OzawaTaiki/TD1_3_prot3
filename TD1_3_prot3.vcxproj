@@ -116,6 +116,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="CSVLoader.cpp" />
+    <ClCompile Include="CursorManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PhilliaFunction\Phill.cpp" />
     <ClCompile Include="PhilliaFunction\PhillEasing.cpp" />
@@ -123,6 +124,11 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="player.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="stage.cpp" />
+    <ClCompile Include="UI\Button.cpp" />
+    <ClCompile Include="UI\Checkbox.cpp" />
+    <ClCompile Include="UI\Slider.cpp" />
+    <ClCompile Include="UI\UI_ToolKit.cpp" />
+    <ClCompile Include="PauseScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\base\StringUtility.h" />
@@ -153,10 +159,17 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="CSVLoader.h" />
+    <ClInclude Include="CursorManager.h" />
     <ClInclude Include="PhilliaFunction\Phill.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="stage.h" />
+    <ClInclude Include="UI\Button.h" />
+    <ClInclude Include="UI\Checkbox.h" />
+    <ClInclude Include="UI\Slider.h" />
+    <ClInclude Include="UI\UI_ToolKit.h" />
+    <ClInclude Include="UI\UI_ToolKit_Defines.h" />
+    <ClInclude Include="PauseScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

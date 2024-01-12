@@ -26,7 +26,8 @@ class Stage
 
 	int stageCntTexture[3];
 	int slashTexture;
-
+	int stageNumY;
+	float theta;
 	int maxStages = 3;
 
 	int isViewDescription;
