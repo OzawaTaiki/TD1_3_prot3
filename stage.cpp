@@ -2,6 +2,7 @@
 #include <Novice.h>
 
 #include "player.h"
+#include "contPanel.h"
 #include "CSVLoader.h"
 
 void Stage::collisionArrReset()
@@ -176,6 +177,12 @@ void Stage::PieceMove()
 						}
 					}
 
+					//走査中のマスがCPのとき
+					else if ((*field_)[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] > 3)
+					{
+						 
+					}
+
 
 					//枠内にあるかどうか
 					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x >= 0 &&
@@ -209,7 +216,6 @@ void Stage::PieceMove()
 }
 
 
-
 bool Stage::UnStackBlockCheck(int x, int y)
 {
 	if ((*field_)[y][x] == 3)	return true;
@@ -218,7 +224,6 @@ bool Stage::UnStackBlockCheck(int x, int y)
 
 
 int Stage::playerCollision()
-
 {
 	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
 		isNext_ = true;
@@ -245,6 +250,7 @@ int Stage::playerCollision()
 Stage::Stage()
 {
 	player_ = new Player(kMapchipSize_);
+	CP_ = new ControlPanel;
 }
 
 void Stage::Init(int _stageNo)
@@ -313,7 +319,7 @@ void Stage::Update(char* keys, char* preKeys)
 
 	collisionArrReset();
 	PieceMove();
-		
+
 
 	player_->Input(keys, preKeys);
 
@@ -332,7 +338,16 @@ void Stage::Draw()
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
 			if ((*field_)[y][x] != 9)
-				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			{
+				if ((*field_)[y][x] > 3)//CP描画
+				{
+					CP_->Draw(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), (*field_)[y][x]-3);
+				}
+				else
+				{
+					Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+				}
+			}
 			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 		}
 	}
@@ -350,6 +365,5 @@ void Stage::Draw()
 			}
 		}
 	}
-
 	player_->Draw(fieldKeyPos_);
 }

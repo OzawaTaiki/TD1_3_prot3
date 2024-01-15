@@ -3,6 +3,7 @@
 #include <vector>
 
 class Player;
+class ControlPanel;
 
 static const int kWindowWidth = 1920;
 static const int kWindowHeight = 1080;
@@ -61,10 +62,11 @@ class Stage
 		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
 		"./data/-_test.csv",
-		//"./data/-_testStage4.csv"
+		"./data/-_testStage4.csv"
 	};
 
 	Player* player_;
+	ControlPanel *CP_;
 
 	void collisionArrReset();
 
