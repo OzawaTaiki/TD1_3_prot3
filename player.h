@@ -47,7 +47,7 @@ public:
 
 	//void Update(char* keys, char* preKeys);
 
-	void Input(char* keys, char* preKeys);
+	void Input(char* keys, char* preKeys,bool *panel);
 
 	void Move(int _endPos);
 

@@ -5,9 +5,10 @@
 class ControlPanel
 {
 	std::vector<intVec2>* pos_;
-	bool isInPiece_[4];
 
-	int GH_[4];//画像 配列で
+	int GH_;//画像 配列で
+	intVec2 GHSize_ = { 160,40 };
+	intVec2 GHDrawSize_ = { 40,40 };
 
 	unsigned int color_[4] = {//仮
 		0xff8000ff,
@@ -17,6 +18,9 @@ class ControlPanel
 	};
 
 public:
+
+	bool isInPiece_[4];
+	
 	ControlPanel();
 	void Init();
 	void Update();
