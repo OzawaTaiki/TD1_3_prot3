@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//}
 		}
 
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE])
+		if (keys[DIK_ESCAPE] && !preKeys[DIK_ESCAPE])
 		{
 			if (!pauseScreen)
 			{
@@ -120,7 +120,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::EndFrame();
 
 		// ESCキーが押されたらループを抜ける
-		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
+		if (preKeys[DIK_F4] == 0 && keys[DIK_F4] != 0) {
 			break;
 		}
 	}
