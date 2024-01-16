@@ -75,6 +75,10 @@ class Stage
 	int selectStage_ = 0;												// ステージナンバー
 	bool isNext_;														// クリアフラグ
 
+	int scanX_;
+	int scanY_;
+	int haveBuf;
+
 	//ファイル名一括管理 すべてここに入力
 	const char* stageFilePath_[64] = {
 		"./data/-_testStage2.csv",
@@ -97,6 +101,8 @@ class Stage
 	bool UnStackBlockCheck(int x, int y);
 
 	bool isInPiece(int checkX, int checkY,int x, int y, int pieceNum);
+
+	void DrawPieceShadow();
 
 public:
 

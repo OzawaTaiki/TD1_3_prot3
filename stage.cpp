@@ -30,9 +30,7 @@ void Stage::collisionArrReset()
 
 void Stage::PieceMove()
 {
-	//bool isInFrame[4] = { false,0,0,0 };
-	bool isInFrame = false;
-	bool isUnstackInPiece = false;			//重ねられないブロックがピース内にあるかのフラグ
+
 
 	Novice::GetMousePosition(&mx_, &my_);
 
@@ -57,6 +55,7 @@ void Stage::PieceMove()
 
 					scal_[i] = kKeyScal_[0];
 					isHave_ = i;
+					haveBuf = isHave_;
 					piecePrePos_ = piecePos_[i];
 					break;
 				}
@@ -68,8 +67,24 @@ void Stage::PieceMove()
 	//pieceをマウスと同じように移動
 	else if (Novice::IsPressMouse(0) && !Novice::IsTriggerMouse(0) && isHave_ != -1)
 	{
+		if (scanX_ == 0 && scanY_ == 4)
+		{
+			int a = 0;
+			a++;
+		}
 		piecePos_[isHave_].x = mx_ + sub_.x;
 		piecePos_[isHave_].y = my_ + sub_.y;
+
+		if (piecePos_[isHave_].x - fieldKeyPos_.x < 0)
+			scanX_ = int((piecePos_[isHave_].x - fieldKeyPos_.x - 40) / kMapchipSize_ + (int(piecePos_[isHave_].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1));
+		else
+			scanX_ = int((piecePos_[isHave_].x - fieldKeyPos_.x) / kMapchipSize_ + (int(piecePos_[isHave_].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1));
+
+		if (piecePos_[isHave_].y - fieldKeyPos_.y < 0)
+			scanY_ = int((piecePos_[isHave_].y - fieldKeyPos_.y - 40) / kMapchipSize_ + (int(piecePos_[isHave_].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1));
+		else
+			scanY_ = int((piecePos_[isHave_].y - fieldKeyPos_.y) / kMapchipSize_ + (int(piecePos_[isHave_].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1));
+
 	}
 
 	//押してないとき，離したとき
@@ -85,6 +100,9 @@ void Stage::PieceMove()
 
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
+			//bool isInFrame[4] = { false,0,0,0 };
+			bool isInFrame = false;
+			bool isUnstackInPiece = false;			//重ねられないブロックがピース内にあるかのフラグ
 			//デバッグ用
 			if (isHave_ != -1)
 			{
@@ -92,7 +110,6 @@ void Stage::PieceMove()
 				a++;
 			}
 
-			isHave_ = -1;
 			piecePos_[i].y = float(int(piecePos_[i].y / kMapchipSize_ + (int(piecePos_[i].y) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 			piecePos_[i].x = float(int(piecePos_[i].x / kMapchipSize_ + (int(piecePos_[i].x) % kMapchipSize_ < kMapchipSize_ / 2 ? 0 : 1)) * kMapchipSize_);
 
@@ -102,20 +119,20 @@ void Stage::PieceMove()
 			{
 				for (int x = 0; x < (*piece_)[i][y].size(); x++)
 				{
-					int scanX = int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x;
-					int scanY = int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y;
+					scanX_ = int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x;
+					scanY_ = int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y;
 
 					//画面内に走査中のピースのブロックがないとき
-					if (scanX < 0 ||
-						scanY < 0 ||
-						scanX >= fieldSize_.x ||
-						scanY >= fieldSize_.y)
+					if (scanX_ < 0 ||
+						scanY_ < 0 ||
+						scanX_ >= fieldSize_.x ||
+						scanY_ >= fieldSize_.y)
 						continue;
 
 
 					//走査中の座標にプレイヤーがいるとき
-					if (scanX == player_->GetPosX() &&
-						scanY == player_->GetPosY())
+					if (scanX_ == player_->GetPosX() &&
+						scanY_ == player_->GetPosY())
 					{
 						//プレイヤーとピースの枠が重なってるとき
 
@@ -139,9 +156,9 @@ void Stage::PieceMove()
 							isUnstackInPiece = true;
 
 						//走査中のマスがCPのとき
-						else if ((*field_)[scanY][scanX] > 3)
+						else if ((*field_)[scanY_][scanX_] > 3)
 						{
-							CP_->isInPiece_[(*field_)[scanY][scanX] - 3] = isInPiece(scanX, scanY, x, y, i);
+							CP_->isInPiece_[(*field_)[scanY_][scanX_] - 3] = isInPiece(scanX_, scanY_, x, y, i);
 						}
 
 						if ((*piece_)[i][y][x] != 0)
@@ -164,12 +181,17 @@ void Stage::PieceMove()
 			{
 				piecePos_[i] = piecePrePos_;
 			}
+
 		}
+
+		isHave_ = -1;
 	}
 
-	Novice::ScreenPrintf(1000, 900, "frame = %s", isInFrame ? "true" : "false");
+	/*Novice::ScreenPrintf(1000, 900, "frame = %s", isInFrame ? "true" : "false");
 	Novice::ScreenPrintf(1000, 920, "unstack = %s", isUnstackInPiece ? "true" : "false");
-	Novice::ScreenPrintf(900, 1020, "%.1f,%.1f", piecePrePos_.x, piecePrePos_.y);
+	Novice::ScreenPrintf(900, 1020, "%.1f,%.1f", piecePrePos_.x, piecePrePos_.y);*/
+	Novice::ScreenPrintf(900, 1020, "%d", isHave_);
+	Novice::ScreenPrintf(900, 1040, "%d,%d", scanX_, scanY_);
 
 }
 
@@ -250,6 +272,25 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 	}
 
 	return true;
+}
+
+void Stage::DrawPieceShadow()
+{
+	if (isHave_ != -1)
+	{
+		for (int y = 0; y < (*piece_)[isHave_].size(); y++)
+		{
+			for (int x = 0; x < (*piece_)[isHave_][y].size(); x++)
+			{
+				if (int((scanX_ + x) * kMapchipSize_ * scal_[isHave_]) / kMapchipSize_ >= 0 &&
+					int((scanX_ + x) * kMapchipSize_ * scal_[isHave_]) / kMapchipSize_ < fieldSize_.x &&
+					int((scanY_ + y) * kMapchipSize_ * scal_[isHave_]) / kMapchipSize_ >= 0 &&
+					int((scanY_ + y) * kMapchipSize_ * scal_[isHave_]) / kMapchipSize_ < (*field_).size())
+
+					Novice::DrawBox(int(fieldKeyPos_.x + (scanX_ + x) * kMapchipSize_ * scal_[isHave_]), int(fieldKeyPos_.y + (scanY_ + y) * kMapchipSize_ * scal_[isHave_]), int(kMapchipSize_ * scal_[isHave_]) - 1, int(kMapchipSize_ * scal_[isHave_]) - 1, 0, (*piece_)[isHave_][y][x] == 0 ? 0 : 0xff, kFillModeSolid);
+			}
+		}
+	}
 }
 
 int Stage::playerCollision()
@@ -410,6 +451,7 @@ void Stage::Update(char* keys, char* preKeys)
 void Stage::Draw()
 {
 	Novice::DrawSprite(0, 0, backGroundTexture, 1.0f, 1.0f, 0.0f, 0xffffffff);
+	Novice::DrawBox(0, 0, 1920, 1080, 0, 0x80, kFillModeSolid);
 
 	// Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0, 0x00000080, kFillModeSolid);
 
@@ -448,7 +490,7 @@ void Stage::Draw()
 		}
 	}
 
-
+	DrawPieceShadow();
 
 	for (int i = 0; i < (*piece_).size(); i++)
 	{
