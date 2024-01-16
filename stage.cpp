@@ -257,13 +257,11 @@ int Stage::playerCollision()
 		isNext_ = true;
 	if (player_->GetMoveDir().x != 0 || player_->GetMoveDir().y != 0)
 	{
-		int k = 0;
-		while (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] != 1)
+		int k = 1;
+		if (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] == 1)
 		{
-			k++;
+			k = 0;
 		}
-		k--;
-
 
 		if (player_->GetMoveDir().x != 0)
 			return int(player_->GetPosX() + player_->GetMoveDir().x * k);
