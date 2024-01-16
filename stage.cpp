@@ -358,11 +358,11 @@ void Stage::Init(int _stageNo)
 
 void Stage::Update(char* keys, char* preKeys)
 {
-	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
+	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN] && !sceneChange_)
 		isNext_ = true;
 
 	/// リセット，仮実装
-	if (keys[DIK_R] && !preKeys[DIK_R])
+	if (keys[DIK_R] && !preKeys[DIK_R] && !sceneChange_)
 	{
 		isNext_ = true;
 		selectStage_--;
@@ -463,6 +463,7 @@ void Stage::Draw()
 			}
 		}
 	}
+
 	player_->Draw(fieldKeyPos_);
 
 	Phill::DrawQuadPlus(1920 / 2, 1080 / 2, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
