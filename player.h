@@ -21,7 +21,7 @@ class Player
 		{1,10},
 		{8,12},
 		{1,11},
-		{1,16},
+		{1,6},
 		{1,16},
 		{1,16},
 		{1,16},
@@ -48,7 +48,7 @@ public:
 
 	//void Update(char* keys, char* preKeys);
 
-	void Input(char* keys, char* preKeys);
+	void Input(char* keys, char* preKeys,bool *panel);
 
 	void Move(int _endPos);
 

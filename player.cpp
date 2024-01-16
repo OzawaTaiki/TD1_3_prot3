@@ -2,23 +2,23 @@
 #include "PhilliaFunction/Phill.h"	// イージングをするために必要
 #include <Novice.h>
 
-void Player::Input(char* keys, char* preKeys)
+void Player::Input(char* keys, char* preKeys, bool* panel)
 {
 	moveDir = { 0,0 };
 
-	if (keys[DIK_W] && !preKeys[DIK_W])
+	if (keys[DIK_W] && !preKeys[DIK_W] && panel[0])
 	{
 		moveDir.y = -1;
 	}
-	if (keys[DIK_A] && !preKeys[DIK_A])
+	if (keys[DIK_A] && !preKeys[DIK_A] && panel[1])
 	{
 		moveDir.x = -1;
 	}
-	if (keys[DIK_S] && !preKeys[DIK_S])
+	if (keys[DIK_S] && !preKeys[DIK_S] && panel[2])
 	{
 		moveDir.y = 1;
 	}
-	if (keys[DIK_D] && !preKeys[DIK_D])
+	if (keys[DIK_D] && !preKeys[DIK_D] && panel[3])
 	{
 		moveDir.x = 1;
 	}
@@ -78,7 +78,7 @@ Player::Player(int mapchipSize)
 
 void Player::Init(int stageNo)
 {
-		
+
 	posX = (int)startPos[stageNo].x;
 	posY = (int)startPos[stageNo].y;
 	DrawPos = { (float)posX * 40,(float)posY * 40 };

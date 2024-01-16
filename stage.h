@@ -4,6 +4,7 @@
 #include "SceneChange.h"
 
 class Player;
+class ControlPanel;
 
 static const int kWindowWidth = 1920;
 static const int kWindowHeight = 1080;
@@ -78,13 +79,14 @@ class Stage
 	const char* stageFilePath_[64] = {
 		"./data/-_testStage2.csv",
 		"./data/-_testStage3.csv",
-		"./data/-_testStage4.csv",
-		//"./data/-_testStage4.csv"
+		"./data/-_test.csv",
+		"./data/-_testStage4.csv"
 	};
 
 	SceneChange* sceneChange_;
 
 	Player* player_;
+	ControlPanel *CP_;
 
 	void collisionArrReset();
 
@@ -93,6 +95,8 @@ class Stage
 	int playerCollision();
 
 	bool UnStackBlockCheck(int x, int y);
+
+	bool isInPiece(int checkX, int checkY,int x, int y, int pieceNum);
 
 public:
 

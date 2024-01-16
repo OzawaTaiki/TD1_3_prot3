@@ -115,6 +115,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\TextureManager.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
+    <ClCompile Include="contPanel.cpp" />
     <ClCompile Include="CSVLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PhilliaFunction\Phill.cpp" />
@@ -152,7 +153,9 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="C:\KamataEngine\DirectXGame\input\Input.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
+    <ClInclude Include="contPanel.h" />
     <ClInclude Include="CSVLoader.h" />
+    <ClInclude Include="intVec2.h" />
     <ClInclude Include="PhilliaFunction\Phill.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="SceneChange.h" />

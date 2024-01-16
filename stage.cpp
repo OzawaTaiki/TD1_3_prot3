@@ -3,6 +3,7 @@
 #include <Novice.h>
 #include "SceneChange.h"
 #include "player.h"
+#include "contPanel.h"
 #include "CSVLoader.h"
 
 void Stage::collisionArrReset()
@@ -29,6 +30,10 @@ void Stage::collisionArrReset()
 
 void Stage::PieceMove()
 {
+	//bool isInFrame[4] = { false,0,0,0 };
+	bool isInFrame = false;
+	bool isUnstackInPiece = false;			//重ねられないブロックがピース内にあるかのフラグ
+
 	Novice::GetMousePosition(&mx_, &my_);
 
 	//押したとき
@@ -72,11 +77,14 @@ void Stage::PieceMove()
 	//当たり判定更新
 	else
 	{
+		collisionArrReset();
+		for (int i = 0; i < 4; i++)
+		{
+			CP_->isInPiece_[i] = false;
+		}
+
 		for (int i = 0; i < (*piece_).size(); i++)
 		{
-			bool isInFrame[4] = { false,0,0,0 };
-			bool isUnstackInPiece = false;			//重ねられないブロックがピース内にあるかのフラグ
-
 			//デバッグ用
 			if (isHave_ != -1)
 			{
@@ -94,87 +102,30 @@ void Stage::PieceMove()
 			{
 				for (int x = 0; x < (*piece_)[i][y].size(); x++)
 				{
+					int scanX = int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x;
+					int scanY = int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y;
+
 					//画面内に走査中のピースのブロックがないとき
-					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x < 0 ||
-						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y < 0 ||
-						int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x >= fieldSize_.x ||
-						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y >= fieldSize_.y)
+					if (scanX < 0 ||
+						scanY < 0 ||
+						scanX >= fieldSize_.x ||
+						scanY >= fieldSize_.y)
 						continue;
 
 
 					//走査中の座標にプレイヤーがいるとき
-					if (int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x == player_->GetPosX() &&
-						int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y == player_->GetPosY())
+					if (scanX == player_->GetPosX() &&
+						scanY == player_->GetPosY())
 					{
 						//プレイヤーとピースの枠が重なってるとき
 
 						if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_))][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_))] == 1)
 						{
-							isInFrame[0] = true;
+							isInFrame = false;
 							break;
 						}
 
-						for (int dir = 0; dir < 4; dir++)
-						{
-							int move = 0;			//判定移動分
-							bool isExit = false;	//強制退場用フラグ
-							while (!isInFrame[dir])
-							{
-								switch (dir)
-								{
-								case 0://上
-									if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move) < 0)
-									{
-										isExit = true;
-										break;
-									}
-									if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
-									{
-										isInFrame[0] = true;
-									}
-
-									break;
-								case 1://左
-									if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move) < 0)
-									{
-										isExit = true;
-										break;
-									}
-									if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
-									{
-										isInFrame[1] = true;
-									}
-									break;
-								case 2://下
-									if (int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move) > (*piece_)[i].size())
-									{
-										isExit = true;
-										break;
-									}
-									if ((*piece_)[i][int(player_->GetPosY() - int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
-									{
-										isInFrame[2] = true;
-									}
-									break;
-								case 3://右
-									if (int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move) > (*piece_)[i][y].size())
-									{
-										isExit = true;
-										break;
-									}
-									if ((*piece_)[i][y][int(player_->GetPosX() - int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
-									{
-										isInFrame[3] = true;
-									}
-									break;
-								default:
-									break;
-								}
-								move++;
-								if (isExit)
-									break;
-							}
-						}
+						isInFrame = isInPiece(player_->GetPosX(), player_->GetPosY(), x, y, i);
 					}
 
 
@@ -187,6 +138,12 @@ void Stage::PieceMove()
 						if (UnStackBlockCheck(int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x, int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y))
 							isUnstackInPiece = true;
 
+						//走査中のマスがCPのとき
+						else if ((*field_)[scanY][scanX] > 3)
+						{
+							CP_->isInPiece_[(*field_)[scanY][scanX] - 3] = isInPiece(scanX, scanY, x, y, i);
+						}
+
 						if ((*piece_)[i][y][x] != 0)
 						{
 							collision_[int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y][int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x] = 1;
@@ -196,23 +153,103 @@ void Stage::PieceMove()
 					}
 				}
 			}
+
+			/*********************************/
+			/*↓↓↓↓↓↓↓↓↓↓↓↓修正予定↓↓↓↓↓↓↓↓↓↓↓↓*/
+			/*********************************/
 			if (scal_[i] != kKeyScal_[0])
 				piecePrePos_ = { 1000.0f,30.0f + i * 200.0f };
 
-			if (!isInFrame[0] || !isInFrame[1] || !isInFrame[2] || !isInFrame[3] || isUnstackInPiece)
+			if (!isInFrame || isUnstackInPiece)
 			{
 				piecePos_[i] = piecePrePos_;
 			}
 		}
 	}
+
+	Novice::ScreenPrintf(1000, 900, "frame = %s", isInFrame ? "true" : "false");
+	Novice::ScreenPrintf(1000, 920, "unstack = %s", isUnstackInPiece ? "true" : "false");
 	Novice::ScreenPrintf(900, 1020, "%.1f,%.1f", piecePrePos_.x, piecePrePos_.y);
 
 }
+
 
 bool Stage::UnStackBlockCheck(int x, int y)
 {
 	if ((*field_)[y][x] == 3)	return true;
 	return false;
+}
+
+
+bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
+{
+	bool isInFrame[4] = { false,0,0,0 };
+
+	for (int dir = 0; dir < 4; dir++)
+	{
+		int move = 0;			//判定移動分
+		bool isExit = false;	//強制退場用フラグ
+		while (!isInFrame[dir])
+		{
+			switch (dir)
+			{
+			case 0://上
+				if (int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) - move) < 0)
+				{//pieceの端を超えた時
+					isExit = true;
+					break;
+				}
+				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
+				{//走査中にpieceのブロックにあたったとき
+					isInFrame[0] = true;
+				}
+
+				break;
+			case 1://左
+				if (int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) - move) < 0)
+				{
+					isExit = true;
+					break;
+				}
+				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
+				{
+					isInFrame[1] = true;
+				}
+				break;
+			case 2://下
+				if (int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) + move) > (*piece_)[pieceNum].size())
+				{
+					isExit = true;
+					break;
+				}
+				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
+				{
+					isInFrame[2] = true;
+				}
+				break;
+			case 3://右
+				if (int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) + move) > (*piece_)[pieceNum][y].size())
+				{
+					isExit = true;
+					break;
+				}
+				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
+				{
+					isInFrame[3] = true;
+				}
+				break;
+			default:
+				break;
+			}
+			move++;
+			if (isExit)
+				break;
+		}
+		if (!isInFrame[dir])//中になかったら即抜け
+			return false;
+	}
+
+	return true;
 }
 
 int Stage::playerCollision()
@@ -221,13 +258,11 @@ int Stage::playerCollision()
 		isNext_ = true;
 	if (player_->GetMoveDir().x != 0 || player_->GetMoveDir().y != 0)
 	{
-		int k = 0;
-		while (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] != 1)
+		int k = 1;
+		if (collision_[int(player_->GetPosY() + player_->GetMoveDir().y * k)][int(player_->GetPosX() + player_->GetMoveDir().x * k)] == 1)
 		{
-			k++;
+			k = 0;
 		}
-		k--;
-
 
 		if (player_->GetMoveDir().x != 0)
 			return int(player_->GetPosX() + player_->GetMoveDir().x * k);
@@ -254,6 +289,7 @@ Stage::Stage()
 	controllTexture		= Novice::LoadTexture("./img/ctrl.png");
 
 	player_ = new Player(kMapchipSize_);
+	CP_ = new ControlPanel;
 }
 
 void Stage::Init(int _stageNo)
@@ -355,11 +391,10 @@ void Stage::Update(char* keys, char* preKeys)
 		return;
 	}
 
-	collisionArrReset();
 	PieceMove();
-		
 
-	player_->Input(keys, preKeys);
+
+	player_->Input(keys, preKeys, CP_->isInPiece_);
 
 	player_->Move(playerCollision());
 
@@ -383,7 +418,14 @@ void Stage::Draw()
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-			if ((*field_)[y][x] != 9 && (*field_)[y][x] != 2)
+
+			if ((*field_)[y][x] != 9)
+			{
+				if ((*field_)[y][x] > 3)//CP描画
+				{
+					CP_->Draw(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), (*field_)[y][x] - 3);
+				}
+				if ((*field_)[y][x] != 9 && (*field_)[y][x] != 2)
 				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
 			if ((*field_)[y][x] == 1)
 				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 7*64, 0, 64, 64, blockTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
@@ -393,8 +435,13 @@ void Stage::Draw()
 
 			if ((*field_)[y][x] == 3)
 				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, obstacleTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+			}
+			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+
+			
 
 			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+
 		}
 	}
 
@@ -413,7 +460,6 @@ void Stage::Draw()
 			}
 		}
 	}
-
 	player_->Draw(fieldKeyPos_);
 
 	Phill::DrawQuadPlus(1920 / 2, 1080 / 2, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
