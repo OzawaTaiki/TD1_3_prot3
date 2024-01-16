@@ -11,6 +11,7 @@ class Player
 	unsigned int color;
 	bool isMove;
 	int endPos;
+	int playerTexture;
 
 	float t = 0;
 	float easedT = 0;

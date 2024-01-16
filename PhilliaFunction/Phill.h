@@ -70,9 +70,8 @@ public:
 
 
 private:
-#ifdef _DEBUG
+
 	static	bool	isDebugMode;
-#endif // _DEBUG
 
 	static	float	LimitConstant(float _constant);
 	static	int		callCnt;

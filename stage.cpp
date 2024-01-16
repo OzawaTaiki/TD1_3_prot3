@@ -1,6 +1,7 @@
 ﻿#include "stage.h"
+#include "PhilliaFunction/Phill.h"	
 #include <Novice.h>
-
+#include "SceneChange.h"
 #include "player.h"
 #include "contPanel.h"
 #include "CSVLoader.h"
@@ -179,6 +180,7 @@ bool Stage::UnStackBlockCheck(int x, int y)
 	return false;
 }
 
+
 bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 {
 	bool isInFrame[4] = { false,0,0,0 };
@@ -250,7 +252,6 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 	return true;
 }
 
-
 int Stage::playerCollision()
 {
 	if ((*field_)[player_->GetPosY()][player_->GetPosX()] == 2)
@@ -272,9 +273,21 @@ int Stage::playerCollision()
 	return -1;
 }
 
-
 Stage::Stage()
 {
+	sceneChange_ = nullptr;
+	backGroundTexture	= Novice::LoadTexture("./img/background.png");
+	blockTexture		= Novice::LoadTexture("./img/block.png");
+	pieceTexture		= Novice::LoadTexture("./img/pieceBlock.png");
+	goalTexture			= Novice::LoadTexture("./img/goal.png");
+	obstacleTexture		= Novice::LoadTexture("./img/obstacleBlock.png");
+	stageCntTexture[0]  = Novice::LoadTexture("./img/stage1.png");
+	stageCntTexture[1]  = Novice::LoadTexture("./img/stage2.png");
+	stageCntTexture[2]  = Novice::LoadTexture("./img/stage3.png");
+	slashTexture		= Novice::LoadTexture("./img/sl.png");
+	descriptionTexture	= Novice::LoadTexture("./img/desc.png");
+	controllTexture		= Novice::LoadTexture("./img/ctrl.png");
+
 	player_ = new Player(kMapchipSize_);
 	CP_ = new ControlPanel;
 }
@@ -288,58 +301,93 @@ void Stage::Init(int _stageNo)
 	if (field_ != nullptr)		field_->clear();
 	if (piece_ != nullptr)		piece_->clear();
 
-	CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
-
-	field_ = CSV_Loader::GetPointerMapchip();
-	piece_ = CSV_Loader::GetPointerPiece();
-
-	piecePos_.resize(piece_->size());
-	pieceSize_.resize(piece_->size());
-	scal_.resize(piece_->size());
-
-	for (int i = 0; i < piecePos_.size(); i++)
+	if (_stageNo < maxStages)
 	{
-		piecePos_[i].x = 1000.0f;
-		piecePos_[i].y = 30.0f + i * 200.0f;
+		CSV_Loader::LoadFromCSV_s(stageFilePath_[_stageNo], '\n');
 
-		piecePrePos_ = piecePos_[i];
-	}
-	collisionArrReset();
+		field_ = CSV_Loader::GetPointerMapchip();
+		piece_ = CSV_Loader::GetPointerPiece();
 
-	fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
-	fieldKeyPos_.x = float((int)fieldKeyPos_.x / kMapchipSize_ * kMapchipSize_);
-	fieldKeyPos_.y -= fieldSize_.y / 2 * kMapchipSize_;
-	fieldKeyPos_.y = float((int)fieldKeyPos_.y / kMapchipSize_ * kMapchipSize_);
+		piecePos_.resize(piece_->size());
+		pieceSize_.resize(piece_->size());
+		scal_.resize(piece_->size());
 
+		isViewDescription = 0;
 
-
-	for (int i = 0; i < (*piece_).size(); i++)
-	{
-		pieceSize_[i] = { 0,0 };
-
-		for (int j = 0; j < (*piece_)[i].size(); j++)
+		for (int i = 0; i < piecePos_.size(); i++)
 		{
-			if (pieceSize_[i].x < (*piece_)[i][j].size())
-				pieceSize_[i].x = (float)(*piece_)[i][j].size();
+			piecePos_[i].x = 1000.0f;
+			piecePos_[i].y = 30.0f + i * 200.0f;
+
+			piecePrePos_ = piecePos_[i];
 		}
-		if (pieceSize_[i].y < (*piece_)[i].size())
-			pieceSize_[i].y = (float)(*piece_)[i].size();
+		collisionArrReset();
+
+		fieldKeyPos_.x -= fieldSize_.x / 2 * kMapchipSize_;
+		fieldKeyPos_.x = float((int)fieldKeyPos_.x / kMapchipSize_ * kMapchipSize_);
+		fieldKeyPos_.y -= fieldSize_.y / 2 * kMapchipSize_;
+		fieldKeyPos_.y = float((int)fieldKeyPos_.y / kMapchipSize_ * kMapchipSize_);
+
+
+
+		for (int i = 0; i < (*piece_).size(); i++)
+		{
+			pieceSize_[i] = { 0,0 };
+
+			for (int j = 0; j < (*piece_)[i].size(); j++)
+			{
+				if (pieceSize_[i].x < (*piece_)[i][j].size())
+					pieceSize_[i].x = (float)(*piece_)[i][j].size();
+			}
+			if (pieceSize_[i].y < (*piece_)[i].size())
+				pieceSize_[i].y = (float)(*piece_)[i].size();
+		}
+
+		isNext_ = false;
+
+		player_->Init(_stageNo);
+
+	}
+	else
+	{
+		// クリア判定
+		isClear = true;
 	}
 
-	isNext_ = false;
-
-	player_->Init(_stageNo);
 }
 
 void Stage::Update(char* keys, char* preKeys)
 {
-	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
-		isNext_ = true;
+	//if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
+	//	isNext_ = true;
 
-	if (isNext_)
+	if (keys[DIK_TAB] && !preKeys[DIK_TAB])
 	{
-		selectStage_++;
-		Init(selectStage_);
+		isViewDescription++;
+		isViewDescription %= 2;
+	}
+
+	if (isNext_ || sceneChange_)
+	{
+		if (!sceneChange_)
+		{
+			sceneChange_ = new SceneChange;
+		}
+
+		if (sceneChange_)
+		{
+			sceneChange_->Update();
+			if (sceneChange_->GetIsTileEnd() && isNext_)
+			{
+				selectStage_++;
+				if (selectStage_ > maxStages)
+				{
+					selectStage_ = 0;
+				}
+				Init(selectStage_);
+			}
+		}
+
 		return;
 	}
 
@@ -354,41 +402,87 @@ void Stage::Update(char* keys, char* preKeys)
 
 void Stage::Draw()
 {
-	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0, 0x00000080, kFillModeSolid);
+	Novice::DrawSprite(0, 0, backGroundTexture, 1.0f, 1.0f, 0.0f, 0xffffffff);
 
-	Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
+	// Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0, 0x00000080, kFillModeSolid);
+
+	//Novice::ScreenPrintf(0, 1000, "%.1f,%.1f", fieldSize_.x, fieldSize_.y);
+
+	//Novice::ScreenPrintf(mx_, my_, "( %4d , %4d )", mx_, my_);
+
+	Phill::DrawQuadPlus(240, 180, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[selectStage_], 0xffffffff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 70, 172, 32, 64, 1.0f, 1.0f, 0.0f, 0, 0, 32, 64, slashTexture, 0xffffffff, DrawMode_LeftTop);
+	Phill::DrawQuadPlus(240 + 48 * 3, 180, 32, 52, 1.0f, 1.0f, 0.0f, 0, 0, 32, 52, stageCntTexture[2], 0x000000ff, DrawMode_LeftTop);
 
 	for (int y = 0; y < (*field_).size(); y++)
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
+
 			if ((*field_)[y][x] != 9)
 			{
 				if ((*field_)[y][x] > 3)//CP描画
 				{
 					CP_->Draw(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), (*field_)[y][x] - 3);
 				}
-				else
-				{
-					Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-				}
+				if ((*field_)[y][x] != 9 && (*field_)[y][x] != 2)
+				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+			if ((*field_)[y][x] == 1)
+				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 7*64, 0, 64, 64, blockTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+
+			if ((*field_)[y][x] == 2)
+				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0,64,64, goalTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+
+			if ((*field_)[y][x] == 3)
+				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, obstacleTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
 			}
 			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+
+			
+
+			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
+
 		}
 	}
 
 
+	
 	for (int i = 0; i < (*piece_).size(); i++)
 	{
-		Novice::ScreenPrintf(0, 1020 + i * 20, "%.1f,%.1f", pieceSize_[i].x, pieceSize_[i].y);
+		//Novice::ScreenPrintf(0, 1020 + i * 20, "%.1f,%.1f", pieceSize_[i].x, pieceSize_[i].y);
 
 		for (int y = 0; y < (*piece_)[i].size(); y++)
 		{
 			for (int x = 0; x < (*piece_)[i][y].size(); x++)
 			{
-				Novice::DrawBox(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
+				Phill::DrawQuadPlus(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 1.0f, 1.0f, 0.0f, (i % 7) * 120, 0, 120, 120, pieceTexture, (*piece_)[i][y][x] == 0 ? 0 : 0xffffffda, PhillDrawMode::DrawMode_LeftTop);
+				//Novice::DrawBox(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 0, (*piece_)[i][y][x] == 0 ? 0 : color_[i], kFillModeSolid);
 			}
 		}
 	}
 	player_->Draw(fieldKeyPos_);
+
+	Phill::DrawQuadPlus(1920 / 2, 1080 / 2, 640, 360, 1.0f, 1.0f, 0.0f, 0, 0, 640, 360, descriptionTexture, 0xffffffff * isViewDescription, DrawMode_Center);
+	Phill::DrawQuadPlus(50, 800, 550, 220, 1.0f, 1.0f, 0.0f, 0, 0, 550, 220, controllTexture, 0xffffffff, DrawMode_LeftTop);
+
+	if (sceneChange_)
+	{
+		sceneChange_->Draw();
+		if(sceneChange_->GetIsEnd())
+		{
+			delete sceneChange_;
+			sceneChange_ = nullptr;
+		}
+	}
+	
+}
+
+int Stage::GetIsClear() const
+{
+	return isClear;
+}
+
+SceneChange* Stage::GetSceneChgPtr()
+{
+	return sceneChange_;
 }
