@@ -16,10 +16,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
+
 	Stage* stage = new Stage;
 	stage->Init(0);
 
 	bool isFullSize = false;
+	Vector2 keyBoxPos = { 1500,500 };	/// キー入力情報描画位置 仮実装
 
 	//SceneChange* sceneChange_from_stage = nullptr;
 
@@ -73,6 +75,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		if (stage) stage->Draw();
+
+		Novice::DrawBox(int(keyBoxPos.x), int(keyBoxPos.y), 63, 63, 0, keys[DIK_W] ? 0xd00000ff : 0xd0d0d0ff, kFillModeSolid);
+		Novice::DrawBox(int(keyBoxPos.x - 64), int(keyBoxPos.y + 64), 63, 63, 0, keys[DIK_A] ? 0xd00000ff : 0xd0d0d0ff, kFillModeSolid);
+		Novice::DrawBox(int(keyBoxPos.x), int(keyBoxPos.y + 64), 63, 63, 0, keys[DIK_S] ? 0xd00000ff : 0xd0d0d0ff, kFillModeSolid);
+		Novice::DrawBox(int(keyBoxPos.x + 64), int(keyBoxPos.y + 64), 63, 63, 0, keys[DIK_D] ? 0xd00000ff : 0xd0d0d0ff, kFillModeSolid);
 
 		///
 		/// ↑描画処理ここまで

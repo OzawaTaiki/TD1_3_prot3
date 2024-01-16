@@ -276,17 +276,17 @@ int Stage::playerCollision()
 Stage::Stage()
 {
 	sceneChange_ = nullptr;
-	backGroundTexture	= Novice::LoadTexture("./img/background.png");
-	blockTexture		= Novice::LoadTexture("./img/block.png");
-	pieceTexture		= Novice::LoadTexture("./img/pieceBlock.png");
-	goalTexture			= Novice::LoadTexture("./img/goal.png");
-	obstacleTexture		= Novice::LoadTexture("./img/obstacleBlock.png");
-	stageCntTexture[0]  = Novice::LoadTexture("./img/stage1.png");
-	stageCntTexture[1]  = Novice::LoadTexture("./img/stage2.png");
-	stageCntTexture[2]  = Novice::LoadTexture("./img/stage3.png");
-	slashTexture		= Novice::LoadTexture("./img/sl.png");
-	descriptionTexture	= Novice::LoadTexture("./img/desc.png");
-	controllTexture		= Novice::LoadTexture("./img/ctrl.png");
+	backGroundTexture = Novice::LoadTexture("./img/background.png");
+	blockTexture = Novice::LoadTexture("./img/block.png");
+	pieceTexture = Novice::LoadTexture("./img/pieceBlock.png");
+	goalTexture = Novice::LoadTexture("./img/goal.png");
+	obstacleTexture = Novice::LoadTexture("./img/obstacleBlock.png");
+	stageCntTexture[0] = Novice::LoadTexture("./img/stage1.png");
+	stageCntTexture[1] = Novice::LoadTexture("./img/stage2.png");
+	stageCntTexture[2] = Novice::LoadTexture("./img/stage3.png");
+	slashTexture = Novice::LoadTexture("./img/sl.png");
+	descriptionTexture = Novice::LoadTexture("./img/desc.png");
+	controllTexture = Novice::LoadTexture("./img/ctrl.png");
 
 	player_ = new Player(kMapchipSize_);
 	CP_ = new ControlPanel;
@@ -358,8 +358,15 @@ void Stage::Init(int _stageNo)
 
 void Stage::Update(char* keys, char* preKeys)
 {
-	//if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
-	//	isNext_ = true;
+	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN])
+		isNext_ = true;
+
+	/// リセット，仮実装
+	if (keys[DIK_R] && !preKeys[DIK_R])
+	{
+		isNext_ = true;
+		selectStage_--;
+	}
 
 	if (keys[DIK_TAB] && !preKeys[DIK_TAB])
 	{
@@ -418,7 +425,6 @@ void Stage::Draw()
 	{
 		for (int x = 0; x < (*field_)[y].size(); x++)
 		{
-
 			if ((*field_)[y][x] != 9)
 			{
 				if ((*field_)[y][x] > 3)//CP描画
@@ -426,19 +432,16 @@ void Stage::Draw()
 					CP_->Draw(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), (*field_)[y][x] - 3);
 				}
 				if ((*field_)[y][x] != 9 && (*field_)[y][x] != 2)
-				Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
-			if ((*field_)[y][x] == 1)
-				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 7*64, 0, 64, 64, blockTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+					Novice::DrawBox(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 0, kTileColor_[(*field_)[y][x]], kFillModeSolid);
+				if ((*field_)[y][x] == 1)
+					Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 7 * 64, 0, 64, 64, blockTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
 
-			if ((*field_)[y][x] == 2)
-				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0,64,64, goalTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+				if ((*field_)[y][x] == 2)
+					Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, goalTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
 
-			if ((*field_)[y][x] == 3)
-				Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, obstacleTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
+				if ((*field_)[y][x] == 3)
+					Phill::DrawQuadPlus(int(fieldKeyPos_.x + x * kMapchipSize_), int(fieldKeyPos_.y + y * kMapchipSize_), kMapchipSize_ - 1, kMapchipSize_ - 1, 1.0f, 1.0f, 0.0f, 0, 0, 64, 64, obstacleTexture, 0xffffffff, PhillDrawMode::DrawMode_LeftTop);
 			}
-			Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
-
-			
 
 			//Novice::ScreenPrintf(1000 + x * 20, y * 20, "%d", collision_[y][x]);
 
@@ -446,7 +449,7 @@ void Stage::Draw()
 	}
 
 
-	
+
 	for (int i = 0; i < (*piece_).size(); i++)
 	{
 		//Novice::ScreenPrintf(0, 1020 + i * 20, "%.1f,%.1f", pieceSize_[i].x, pieceSize_[i].y);
@@ -468,13 +471,13 @@ void Stage::Draw()
 	if (sceneChange_)
 	{
 		sceneChange_->Draw();
-		if(sceneChange_->GetIsEnd())
+		if (sceneChange_->GetIsEnd())
 		{
 			delete sceneChange_;
 			sceneChange_ = nullptr;
 		}
 	}
-	
+
 }
 
 int Stage::GetIsClear() const

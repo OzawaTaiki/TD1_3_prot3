@@ -28,7 +28,7 @@ class Stage
 	int stageCntTexture[3];
 	int slashTexture;
 
-	int maxStages = 3;
+	int maxStages = 4;
 
 	int isViewDescription;
 
