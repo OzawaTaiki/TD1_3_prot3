@@ -44,6 +44,8 @@ class Stage
 	std::vector<float> scal_;
 
 	std::vector<intVec2> adjacentPos_;		//ピースが隣接してるときの左or上の座標
+	std::vector<char> adjacentDir_;
+
 
 	const float kKeyScal_[2] = {
 		1.0f,0.75f
@@ -96,6 +98,8 @@ class Stage
 	bool isAdjacent(int _pieceNum);///隣接したピースの有無
 	/// dir : x or y 隣接している辺
 	void AdjacentPos(int _pieceNum1, int _pieceNum2, char _dir);///隣接座標求
+
+	void AdjacentPieceDelete(int _pieceNum1, int _pieceNum2);
 
 public:
 

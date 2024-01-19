@@ -136,6 +136,9 @@ void Stage::PieceMove()
 			{
 				for (int x = 0; x < (*piece_)[i][y].size(); x++)
 				{
+					if ((*piece_)[i][y][x] == 2)
+						(*piece_)[i][y][x] = 1;
+
 					scanX_ = int((piecePos_[i].x - fieldKeyPos_.x) / kMapchipSize_) + x;
 					scanY_ = int((piecePos_[i].y - fieldKeyPos_.y) / kMapchipSize_) + y;
 
@@ -241,7 +244,7 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 					isExit = true;
 					break;
 				}
-				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] == 1)
+				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) - move)][x] != 0)
 				{//走査中にpieceのブロックにあたったとき
 					isInFrame[0] = true;
 				}
@@ -253,7 +256,7 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 					isExit = true;
 					break;
 				}
-				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) - move)] == 1)
+				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) - move)] != 0)
 				{
 					isInFrame[1] = true;
 				}
@@ -264,7 +267,7 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 					isExit = true;
 					break;
 				}
-				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] == 1)
+				if ((*piece_)[pieceNum][int(checkY - int((piecePos_[pieceNum].y - fieldKeyPos_.y) / kMapchipSize_) + move)][x] != 0)
 				{
 					isInFrame[2] = true;
 				}
@@ -275,7 +278,7 @@ bool Stage::isInPiece(int checkX, int checkY, int x, int y, int pieceNum)
 					isExit = true;
 					break;
 				}
-				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) + move)] == 1)
+				if ((*piece_)[pieceNum][y][int(checkX - int((piecePos_[pieceNum].x - fieldKeyPos_.x) / kMapchipSize_) + move)] != 0)
 				{
 					isInFrame[3] = true;
 				}
@@ -315,7 +318,7 @@ void Stage::DrawPieceShadow()
 
 bool Stage::isAdjacent(int _pieceNum)
 {
-
+	bool isAdjacent = false;
 	for (int i = _pieceNum + 1; i < piece_->size(); i++)
 	{
 		if (i == _pieceNum)
@@ -330,8 +333,8 @@ bool Stage::isAdjacent(int _pieceNum)
 				piecePosInMapchip_[i].y + pieceSize_[i].y - 1 == piecePosInMapchip_[_pieceNum].y - 1)
 			{
 				Novice::ScreenPrintf(1500, 800, "x");
-				AdjacentPos(i, _pieceNum, 'x');
-				return true;
+				AdjacentPos(_pieceNum, i, 'x');
+				isAdjacent = true;
 			}
 		}
 		else if (piecePosInMapchip_[i].y <= piecePosInMapchip_[_pieceNum].y + pieceSize_[_pieceNum].y - 1 &&
@@ -344,8 +347,13 @@ bool Stage::isAdjacent(int _pieceNum)
 			{
 				Novice::ScreenPrintf(1500, 800, "y");
 				AdjacentPos(_pieceNum, i, 'y');
-				return true;
+				isAdjacent = true;
 			}
+		}
+		if (isAdjacent)
+		{
+			AdjacentPieceDelete(_pieceNum, i);
+			break;
 		}
 	}
 	return false;
@@ -353,52 +361,53 @@ bool Stage::isAdjacent(int _pieceNum)
 
 void Stage::AdjacentPos(int _pieceNum1, int _pieceNum2, char _dir)
 {
+	adjacentDir_.push_back(_dir);
 	switch (_dir)
 	{
 	case 'x':
 		if (piecePosInMapchip_[_pieceNum1].x > piecePosInMapchip_[_pieceNum2].x)
 		{
 			if (piecePosInMapchip_[_pieceNum1].y < piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x,piecePosInMapchip_[_pieceNum2].y });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x,piecePosInMapchip_[_pieceNum2].y - 1 });
 			else if (piecePosInMapchip_[_pieceNum1].y > piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x,piecePosInMapchip_[_pieceNum1].y - 1 });
 		}
 		else if (piecePosInMapchip_[_pieceNum1].x < piecePosInMapchip_[_pieceNum2].x)
 		{
 			if (piecePosInMapchip_[_pieceNum1].y < piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x,piecePosInMapchip_[_pieceNum2].y - 1 });
 			else if (piecePosInMapchip_[_pieceNum1].y > piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x,piecePosInMapchip_[_pieceNum1].y });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x,piecePosInMapchip_[_pieceNum1].y - 1 });
 		}
 		else if (piecePosInMapchip_[_pieceNum1].x == piecePosInMapchip_[_pieceNum2].x)
 		{
 			if (piecePosInMapchip_[_pieceNum1].y < piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x,piecePosInMapchip_[_pieceNum2].y - 1 });
 			else if (piecePosInMapchip_[_pieceNum1].y > piecePosInMapchip_[_pieceNum2].y)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x,piecePosInMapchip_[_pieceNum1].y - 1 });
 		}
 		break;
 	case 'y':
 		if (piecePosInMapchip_[_pieceNum1].y > piecePosInMapchip_[_pieceNum2].y)
 		{
 			if (piecePosInMapchip_[_pieceNum1].x > piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x - 1,piecePosInMapchip_[_pieceNum1].y });
 			else if (piecePosInMapchip_[_pieceNum1].x < piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x,piecePosInMapchip_[_pieceNum1].y });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x - 1,piecePosInMapchip_[_pieceNum1].y });
 		}
 		else if (piecePosInMapchip_[_pieceNum1].y < piecePosInMapchip_[_pieceNum2].y)
 		{
 			if (piecePosInMapchip_[_pieceNum1].x > piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x,piecePosInMapchip_[_pieceNum2].y });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x - 1,piecePosInMapchip_[_pieceNum2].y });
 			else if (piecePosInMapchip_[_pieceNum1].x < piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x - 1,piecePosInMapchip_[_pieceNum2].y });
 		}
 		else if (piecePosInMapchip_[_pieceNum1].y == piecePosInMapchip_[_pieceNum2].y)
 		{
 			if (piecePosInMapchip_[_pieceNum1].x < piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum2].x - 1,piecePosInMapchip_[_pieceNum2].y });
 			else if (piecePosInMapchip_[_pieceNum1].x > piecePosInMapchip_[_pieceNum2].x)
-				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1] });
+				adjacentPos_.push_back({ piecePosInMapchip_[_pieceNum1].x - 1,piecePosInMapchip_[_pieceNum1].y });
 		}
 		break;
 	default:
@@ -410,7 +419,74 @@ void Stage::AdjacentPos(int _pieceNum1, int _pieceNum2, char _dir)
 		if (adjacentPos_.back().x == adjacentPos_[i].x &&
 			adjacentPos_.back().y == adjacentPos_[i].y &&
 			adjacentPos_.size() - 1 != i)
+		{
 			adjacentPos_.pop_back();
+			break;
+		}
+	}
+}
+
+void Stage::AdjacentPieceDelete(int _pieceNum1, int _pieceNum2)
+{
+	for (int i = 0; i < adjacentDir_.size(); i++)
+	{
+		int count1 = 1;
+		int count2 = 1;
+		int temp1;
+		int temp2;
+
+		switch (adjacentDir_[i])
+		{
+		case 'x':
+
+			temp1 = adjacentPos_[i].x - piecePosInMapchip_[_pieceNum1].x;
+			temp2 = adjacentPos_[i].x - piecePosInMapchip_[_pieceNum2].x;
+
+			if (piecePosInMapchip_[_pieceNum1].y < piecePosInMapchip_[_pieceNum2].y)
+			{
+				while (temp1 + count1 < (*piece_)[_pieceNum1][(*piece_)[_pieceNum1].size() - 1].size() - 1 &&
+					temp2 + count2 < (*piece_)[_pieceNum2][0].size() - 1)
+				{
+					(*piece_)[_pieceNum1][(*piece_)[_pieceNum1].size() - 1][temp1 + count1++] = 2;
+					(*piece_)[_pieceNum2][0][temp2 + count2++] = 2;
+				}
+			}
+			else if (piecePosInMapchip_[_pieceNum1].y > piecePosInMapchip_[_pieceNum2].y)
+			{
+				while (temp1 + count1 < (*piece_)[_pieceNum1][0].size() - 1 &&
+					temp2 + count2 < (*piece_)[_pieceNum2][(*piece_)[_pieceNum2].size() - 1].size() - 1)
+				{
+					(*piece_)[_pieceNum1][0][temp1 + count1++] = 2;
+					(*piece_)[_pieceNum2][(*piece_)[_pieceNum2].size() - 1][temp2 + count2++] = 2;
+				}
+			}
+			break;
+		case 'y':
+			temp1 = adjacentPos_[i].y - piecePosInMapchip_[_pieceNum1].y;
+			temp2 = adjacentPos_[i].y - piecePosInMapchip_[_pieceNum2].y;
+
+			if (piecePosInMapchip_[_pieceNum1].x > piecePosInMapchip_[_pieceNum2].x)
+			{
+				while (temp1 + count1 < (*piece_)[_pieceNum1].size() - 1 &&
+					temp2 + count2 < (*piece_)[_pieceNum2].size() - 1)
+				{
+					(*piece_)[_pieceNum1][temp1 + count1++][0] = 2;
+					(*piece_)[_pieceNum2][temp2 + count2++][(*piece_)[_pieceNum2][temp2 + count2].size() - 1] = 2;
+				}
+			}
+			else if (piecePosInMapchip_[_pieceNum1].x < piecePosInMapchip_[_pieceNum2].x)
+			{
+				while (temp1 + count1 < (*piece_)[_pieceNum1].size() - 1 &&
+					temp2 + count2 < (*piece_)[_pieceNum2].size() - 1)
+				{
+					(*piece_)[_pieceNum1][temp1 + count1++][(*piece_)[_pieceNum1][temp1 + count1].size() - 1] = 2;
+					(*piece_)[_pieceNum2][temp2 + count2++][0] = 2;
+				}
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -463,6 +539,7 @@ void Stage::Init(int _stageNo)
 	if (field_ != nullptr)		field_->clear();
 	if (piece_ != nullptr)		piece_->clear();
 	adjacentPos_.clear();
+	adjacentDir_.clear();
 
 	if (_stageNo < maxStages)
 	{
@@ -563,6 +640,7 @@ void Stage::Update(char* keys, char* preKeys)
 	}
 
 	adjacentPos_.clear();
+	adjacentDir_.clear();
 	PieceMove();
 
 
@@ -576,10 +654,7 @@ void Stage::Update(char* keys, char* preKeys)
 void Stage::Draw()
 {
 
-	for (int i = 0; i < adjacentPos_.size(); i++)
-	{
-		Novice::ScreenPrintf(1400, 720 + i * 20, "%d,%d", adjacentPos_[i].x, adjacentPos_[i].y);
-	}
+
 	Novice::DrawSprite(0, 0, backGroundTexture, 1.0f, 1.0f, 0.0f, 0xffffffff);
 	Novice::DrawBox(0, 0, 1920, 1080, 0, 0x80, kFillModeSolid);
 
@@ -631,9 +706,16 @@ void Stage::Draw()
 		{
 			for (int x = 0; x < (*piece_)[i][y].size(); x++)
 			{
-				Phill::DrawQuadPlus(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 1.0f, 1.0f, 0.0f, (i % 7) * 120, 0, 120, 120, pieceTexture, (*piece_)[i][y][x] == 0 ? 0 : 0xffffffda, PhillDrawMode::DrawMode_LeftTop);
+				if ((*piece_)[i][y][x] == 1)
+					Phill::DrawQuadPlus(int(piecePos_[i].x + x * kMapchipSize_ * scal_[i]), int(piecePos_[i].y + y * kMapchipSize_ * scal_[i]), int(kMapchipSize_ * scal_[i]) - 1, int(kMapchipSize_ * scal_[i]) - 1, 1.0f, 1.0f, 0.0f, (i % 7) * 120, 0, 120, 120, pieceTexture, 0xffffffda, PhillDrawMode::DrawMode_LeftTop);
 			}
 		}
+	}
+
+	for (int i = 0; i < adjacentPos_.size(); i++)
+	{
+		Novice::ScreenPrintf(1400, 720 + i * 20, "%d,%d", adjacentPos_[i].x, adjacentPos_[i].y);
+		Novice::DrawBox(int(fieldKeyPos_.x + adjacentPos_[i].x * kMapchipSize_), int(fieldKeyPos_.y + adjacentPos_[i].y * kMapchipSize_), kMapchipSize_, kMapchipSize_, 0, RED, kFillModeWireFrame);
 	}
 
 	player_->Draw(fieldKeyPos_);
